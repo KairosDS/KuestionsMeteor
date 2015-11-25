@@ -31,6 +31,11 @@
         padding-bottom: 100px;
     }
 
+    header .intro-text .intro-heading {
+        font-size: 65px;
+        line-height: 1;
+    }
+
     .navbar-brand { height: auto; }
     .navbar-right { margin-right: 0; }
     .navbar-collapse { padding-top: 21px; }
