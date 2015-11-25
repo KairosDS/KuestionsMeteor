@@ -41,6 +41,8 @@ header .container {
     section {
         padding-top: 50px;
     }
+
+    .k-test__section:not(:last-child) { margin-bottom: 50px; }
 }
 
 @media (min-width: 768px) {
