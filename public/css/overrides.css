@@ -1,0 +1,46 @@
+.kairos {
+    max-height: 65px;
+}
+
+@media (max-width: 767px) {
+    .navbar-brand { padding: 7px 15px; }
+
+    .kairos {
+        position: static;
+        max-height: 35px;
+        max-width: initial;
+    }
+
+    header .intro-text .intro-heading {
+        font-size: 24px;
+        line-height: 1.25;
+    }
+
+    section h2.section-heading {
+        font-size: 28px;
+    }
+
+    section {
+        padding-top: 50px;
+    }
+}
+
+@media (min-width: 768px) {
+    header .intro-text {
+        padding-top: 200px;
+        padding-bottom: 100px;
+    }
+
+    .navbar-brand { height: auto; }
+    .navbar-right { margin-right: 0; }
+    .navbar-collapse { padding-top: 21px; }
+    .navbar-collapse ul { 
+        display: flex; 
+        align-items: center;
+    }
+    .navbar > .container .navbar-brand {
+        padding-left: 0;
+    }
+}
+
+
