@@ -1,26 +1,36 @@
 Results = new Mongo.Collection("results");
 
 Meteor.publish("kuestions", function () {
-  return Kuestions.find({},{fields:{"question":1,"codeExample":1,"answers.text":1}});
+  return Kuestions.find({},{fields:{"_id":1,"test":1,"question":1,"codeExample":1,"answers.text":1}});
 });
 Meteor.publish("answers", function () {
   return Answers.find({});
 });
+Meteor.publish("kteam", function () {
+  return KTeam.find({});
+});
+Meteor.publish("khistory", function () {
+  return KTeam.find({});
+});
 
 Meteor.startup( function(){
-  /*var cursorAnswers = Answers
-                    .find({})
-                    .observe({
-                      added:function(d){
-                        console.log( d._id );
-                        if ( d.answerID ) {
-                          // CALC SCORE
-                          console.log( "Insertada respuesta: " + d.answerID );
-                        }
-                      }
-                    });
-                    */
-  // Answers._ensureIndex( {answerID:1} ); //, { unique: true } );
+  /*var dev = (location.host=="localhost"),
+        clientid = (dev)?"dc1cdc65081be9e5ef7b":"d3ecf49b839fc43d6e26",
+        secret = (dev)?"becf14076e4773a8ef48837372902ee74b01db3d":"84f74c16d05b9cb15b444358d5c2b003d355b996";
+
+  console.log( "---> " + dev );
+
+  ServiceConfiguration.configurations.upsert(
+    { service: "github" },
+    {
+      $set: {
+        clientId: clientid,
+        loginStyle: "popup",
+        secret: secret
+      }
+    }
+  );*/
+
 
   Answers.allow({
     'insert': function ( userId, doc) {
@@ -30,25 +40,57 @@ Meteor.startup( function(){
   });
 
   Meteor.methods({
-    'testEnd': function(){
+    'testEnd': function(args){
       console.log( "Terminó el usuario " + this.userId );
       // Calc score
-      var r = Answers.find({"user":this.userId}).fetch(), 
+      var t = args.t,
+          r = Answers.find({"user":this.userId+t}).fetch(),
+          idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 ),
+          objId = new Meteor.Collection.ObjectID(), 
           result = 0;
+      //console.log( "USER ID: " + this.userId );
       for ( i=0; i<r.length; i++ ){
-        var oid = new Meteor.Collection.ObjectID(r[i].answerID),
-            a = Kuestions.findOne({_id:oid}).answers;
+        var id = r[i].answerID,
+            oid , a;
+        if (idType) { oid = id; } else { objId._str = id; oid = objId; }
+        a = Kuestions.findOne({_id:oid}).answers;
         obj = _.find( a, function(obj) { return ( obj.text === r[i].answerTXT ); } );
         result += obj.value;
       }
       // Time
       timeToComplete = 0;
       // Guardamos en result
-      Results.insert( { "user":this.userId, 
-                        "username":Meteor.user().services.github.username, 
-                        "email":Meteor.user().services.github.email,
-                        "score":result,
-                        "time": timeToComplete });
+
+      if ( !Results.find( { "user":this.userId+t } ).count() ) {
+        Results.insert( { "user":this.userId+t, 
+                          "username":Meteor.user().services.github.username, 
+                          "email":Meteor.user().services.github.email,
+                          "score":result,
+                          "time": timeToComplete });
+        return "Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!";
+      } else {
+        return "Este test ya lo realizaste y no es posible hacerlo mas de una vez. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!";
+      }
+    },
+    getId: function( args ){
+      var id = args.id,
+          idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 );
+      if ( idType ) {
+        oid = id;
+      } else {
+        oid = new Meteor.Collection.ObjectID();
+        oid._str = id;
+      }
+      return oid;
+    },
+    doTest: function( args ) {
+      var t = args.t;
+      if ( !Results.find( { "user":this.userId+t } ).count() ) {
+        return "";
+      } else {
+        return "Test ya realizado. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!";
+      }
+      
     }
   });
 

@@ -871,7 +871,7 @@ body {
 .user { background: #fed136; padding: 10px; }
 .fa-javascript-logo:before{ content:url("/img/logos/js-icon-transp.png");}
 .fa-qa-logo:before{ content:url("/img/logos/qa-icon-transp.png");}
-.fa-html5-logo:before{ content:url("/img/logos/html5-icon-transp.png");}
+.fa-friki-logo:before{ content:url("/img/logos/friki_logo.png");}
 .intro-text { text-shadow: 2px 2px darkblue; }
 
 @media (max-width: 360px) {

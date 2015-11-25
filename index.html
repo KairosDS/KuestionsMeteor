@@ -53,9 +53,9 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li class="hidden"><a href="#page-top"></a></li>
                     <li><a class="page-scroll" href="#tests">Tests</a></li>
-                    <li><a class="page-scroll" href="#about">About</a></li>
-                    <li><a class="page-scroll" href="#team">Team</a></li>
-                    <li><a class="page-scroll" href="#contact">Contact</a></li>
+                    <li><a class="page-scroll" href="#about">Acerca de</a></li>
+                    <li><a class="page-scroll" href="#team">El equipo</a></li>
+                    <!--<li><a class="page-scroll" href="#contact">Contactanos</a></li>-->
                     {{#if currentUser}}
                     <li><a class="page-scroll logout" href="#">Logout</a></li>
                     {{else}}
@@ -76,73 +76,23 @@
     <header>
         <div class="container">
             <div class="intro-text">
-                <div class="intro-lead-in">Welcome To Kuestions!</div>
-                <div class="intro-heading">It's Nice To Meet You</div>
-                <div class="intro-heading">Do you want work with us?</div>
-                <a href="#login" class="page-scroll btn btn-xl">Tell Me More</a>
+                <div class="intro-lead-in">Bienvenido a Kuestions!</div>
+                <div class="intro-heading">Encantados de conocerte</div>
+                <div class="intro-heading">¿Quieres trabajar con nosotros?</div>
+                <a href="#login" class="page-scroll btn btn-xl">Cuéntame mas</a>
             </div>
         </div>
     </header>
-
 	
     <!-- LOGIN Section -->
     <a name="login"></a>
     <section id="test">
-        <div class="container">
-		{{#if currentUser}}
-            <div class="row text-center">
-            	<div class="col-md-12">
-            		<h3 class="service-heading">The test process</h3>
-            		<p class="text-muted">If you want to work with us you must complete the test in relation to your profile.</p>
-            	</div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                    	<a href='#javascript-test'>
-	                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-	                        <i class="fa fa-javascript-logo fa-stack-1x fa-inverse"></i>
-	                    </a>
-                    </span>
-                    <h4 class="service-heading">Javascript</h4>
-                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                    	<a href='#qa-test'>
-	                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-	                        <i class="fa fa-qa-logo fa-stack-1x fa-inverse"></i>
-	                    </a>
-                    </span>
-                    <h4 class="service-heading">Quality Assurance</h4>
-                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-                </div>
-                <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                    	<a href='#html5-test'>
-	                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-	                        <i class="fa fa-html5-logo fa-stack-1x fa-inverse"></i>
-	                    </a>
-                    </span>
-                    <h4 class="service-heading">HTML5</h4>
-                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-                </div>
-            </div>
-		{{else}}
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Login</h2>
-                    <h3 class="section-subheading text-muted">First, we need to do login with your GitHub account</h3>
-                    <!--button type="button" class="btn btn-social-login btn-github"><i class="fa fa-github"></i> Sign in with GitHub</button-->
-                    {{> loginButtons}}
-                    <div style="margin-top:100px"></div>
-                </div>
-            </div>
-        {{/if}}
-        </div>
+        {{> loginSection}}
     </section>
 
     <!-- TESTS Grid Section -->
     <section id="javascript-test" class="bg-light-gray">
-        {{> jsTest}}
+        {{> theTest}}
     </section>
 
     <!-- About Section -->
@@ -154,11 +104,6 @@
     <section id="team" class="bg-light-gray">
         {{> team}}
     </section>
-
-    <!-- Clients Aside
-    <aside class="clients">
-       {{> clients}}
-    </aside>-->
     
     <!-- Contact Section -->
     <section id="contact">
@@ -170,12 +115,64 @@
     </footer>
 </template>
 
+<template name="loginSection">
+	<div class="container">
+		{{#if currentUser}}
+            <div class="row text-center">
+            	<div class="col-md-12">
+            		<h3 class="service-heading">El proceso de test</h3>
+            		<p class="text-muted">Si quieres trabajar con nosotros debes completar uno de los test relacionados con tu pertil</p>
+            	</div>
+                <div class="col-md-6">
+                    <span class="fa-stack fa-4x">
+                    	<a href='#the-test' class="test" data-test="javascript">
+	                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+	                        <i class="fa fa-javascript-logo fa-stack-1x fa-inverse"></i>
+	                    </a>
+                    </span>
+                    <h4 class="service-heading">Javascript</h4>
+                    <p class="text-muted">¿Eres un front-end developer?. ¿Te gusta node? ¿Javascript te pone? Este es tu test.</p>
+                </div>
+                <div class="col-md-6">
+                    <span class="fa-stack fa-4x">
+                    	<a href='#the-test' class="test" data-test="q-adopter">
+	                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+	                        <i class="fa fa-qa-logo fa-stack-1x fa-inverse"></i>
+	                    </a>
+                    </span>
+                    <h4 class="service-heading">Quality Architect</h4>
+                    <p class="text-muted">Si tu perfil es de alguien que sabe de arquitectura tecnologíca, de metodologias ágiles, cuida la calidad, se preocupa por la integración continua, sigue los principios SOLID... este es tu test</p>
+                </div>
+                <div class="col-md-4">
+                    <span class="fa-stack fa-4x">
+                    	<a href='#the-test' class="test" data-test="friki">
+	                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+	                        <i class="fa fa-friki-logo fa-stack-1x fa-inverse"></i>
+	                    </a>
+                    </span>
+                    <h4 class="service-heading">Friki</h4>
+                    <p class="text-muted">¿Quieres subir nota? ¿Eres un friki y te mola demostrarlo? Este test es para completar alguno de los otros dos. Son preguntas con un cierto toque diferente. ¿Te atreves? ;)</p>
+                </div>
+            </div>
+		{{else}}
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Login</h2>
+                    <h3 class="section-subheading text-muted">Primero, tienes que logarte con tu cuenta de github. ¿No tienes? No importa, abrete una y participa en nuestros test.</h3>
+                    {{> loginButtons}}
+                    <div style="margin-top:100px"></div>
+                </div>
+            </div>
+        {{/if}}
+    </div>
+</template>
+
 <template name="team">
 	<div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
-                <h2 class="section-heading">Our Amazing Javascript Team</h2>
-                <h3 class="section-subheading text-muted">Our senior Javascript Team is composed by</h3>
+                <h2 class="section-heading">Nuestro increible equipo</h2>
+                <h3 class="section-subheading text-muted">Esta compuesto por</h3>
             </div>
         </div>
         <div class="row">
@@ -185,7 +182,7 @@
         </div>
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 text-center">
-                <p class="large text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p>
+                <p class="large text-muted">Este es el Kairós Team!</p>
             </div>
         </div>
     </div>
@@ -298,11 +295,11 @@
                         </div>
                         <div class="timeline-panel">
                             <div class="timeline-heading">
-                                <h4>2010-2014</h4>
-                                <h4 class="subheading">The begining...</h4>
+                                <h4>Abril 2015</h4>
+                                <h4 class="subheading">El comienzo...</h4>
                             </div>
                             <div class="timeline-body">
-                                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
+                                <p class="text-muted">Kairós Digital Solution comienza su andadura el 5 de Abril de 2015</p>
                             </div>
                         </div>
                     </li>
@@ -312,11 +309,11 @@
                         </div>
                         <div class="timeline-panel">
                             <div class="timeline-heading">
-                                <h4>March 2014</h4>
-                                <h4 class="subheading">An Knowlegment-Boutique is Born</h4>
+                                <h4>Mayo 2015</h4>
+                                <h4 class="subheading">Primeras incorporaciones</h4>
                             </div>
                             <div class="timeline-body">
-                                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
+                                <p class="text-muted">Se incorporan al equipo varios miembros y comenzamos a expandirnos por clientes que buscan personas con una calidad por encima de lo que</p>
                             </div>
                         </div>
                     </li>
@@ -326,11 +323,11 @@
                         </div>
                         <div class="timeline-panel">
                             <div class="timeline-heading">
-                                <h4>December 2012</h4>
-                                <h4 class="subheading">Transition to Full Service</h4>
+                                <h4>Junio 2015</h4>
+                                <h4 class="subheading">El equipo crece</h4>
                             </div>
                             <div class="timeline-body">
-                                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
+                                <p class="text-muted">Carlos me ayudas? :D</p>
                             </div>
                         </div>
                     </li>
@@ -340,8 +337,8 @@
                         </div>
                         <div class="timeline-panel">
                             <div class="timeline-heading">
-                                <h4>July 2014</h4>
-                                <h4 class="subheading">Phase Two Expansion</h4>
+                                <h4>Septiembre-Noviembre 2015</h4>
+                                <h4 class="subheading">Fase de mayor expansion</h4>
                             </div>
                             <div class="timeline-body">
                                 <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
@@ -350,9 +347,9 @@
                     </li>
                     <li class="timeline-inverted">
                         <div class="timeline-image">
-                            <h4>Be Part
-                                <br>Of Our
-                                <br>Story!</h4>
+                            <h4>Se parte
+                                <br>De La
+                                <br>Historia!</h4>
                         </div>
                     </li>
                 </ul>
@@ -388,20 +385,27 @@
 	</div>
 </template>
 
-<template name="jsTest">
-	<a name="javascript-test"></a>
+<template name="theTest">
+	<a name="the-test"></a>
+    {{ #if activeTest }}
 	<div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
-                <h2 class="section-heading">Javascript Test</h2>
-                <h3 class="section-subheading text-muted">Remember that when you click on 'start' button you will have N minutes to complete the test.</h3>
-                <h4>May the force be with you!</h4>
+                <h2 class="section-heading"> {{activeTest}} Test</h2>
+				{{ #if testNotStarted }}
+                <h3 class="section-subheading text-muted">Recuerda que cuando hagas click en el boton 'start', tienes 6 minutos para completar el test..</h3>
+                <h4>Que la fuerza te acompañe!</h4>
+                {{/if}}
+                <h3 id='clock'></h3>
             </div>
         </div>
+        {{ #if testNotStarted }}
         <div id="start_clock" class="row text-center">
-        	<button type="button" class="btn btn-warning start-js-test"><span class="glyphicon glyphicon-play"></span> Start</button>
+        	<button type="button" class="btn btn-warning start-test"><span class="glyphicon glyphicon-play"></span> Start</button>
         </div>
+        {{/if}}
         <div class="row text-center">
+        	<div class="col-md-12 col-sm-6 messageText">{{messageTest}}</div>
             <div class="col-md-6 col-sm-6 test-question">
 				<div>{{nextQuestion}}</div>
 				{{{nextCodeExample}}}
@@ -411,7 +415,11 @@
             		<div><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> {{this.text}}</div>
             	{{/each}}
             </div>
-            
         </div>
     </div>
+    {{else}}
+    <div class="row text-center">
+      	<div class="col-md-12 col-sm-6 messageText">{{messageTest}}</div>
+    </div>
+    {{/if}}
 </template>
