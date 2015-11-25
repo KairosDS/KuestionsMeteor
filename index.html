@@ -112,7 +112,7 @@
     </section>
 
     <footer>
-        {{footer}}
+        {{> footer}}
     </footer>
 </template>
 
@@ -241,29 +241,27 @@
 </template>
 
 <template name="footer">
-	<div class="container">
+	<div class="container footer">
         <div class="row">
             <div class="col-md-4">
                 <span class="copyright">Copyright &copy; Kairós Digital Solution S.L. 2015</span>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-8">
                 <ul class="list-inline social-buttons">
-                    <li><a href="#http://www.twitter.com/kairosds"><i class="fa fa-twitter"></i>@kairosds</a>
-                    </li>
-                    <li><a href="http://www.kairosds.com"><i class="fa fa-link"></i></a>
-                    </li>
+                    <li><a href="http://twitter.com/kairosds"><i class="fa fa-twitter"></i>@kairosds</a></li>
+                    <li><a href="http://www.kairosds.com"><i class="fa fa-link"></i></a></li>
                     <!--<li><a href="#"><i class="fa fa-linkedin"></i></a>
                     </li>-->
                 </ul>
             </div>
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
                 <ul class="list-inline quicklinks">
                     <li><a href="#privacy_policy">Privacy Policy</a>
                     </li>
                     <li><a href="#terms_of_use">Terms of Use</a>
                     </li>
                 </ul>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
