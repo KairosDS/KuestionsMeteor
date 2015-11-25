@@ -2,6 +2,10 @@
     max-height: 65px;
 }
 
+.k-test {
+    margin-bottom: 30px;
+}
+
 @media (max-width: 767px) {
     .navbar-brand { padding: 7px 15px; }
 

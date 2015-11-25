@@ -119,7 +119,7 @@
 <template name="loginSection">
 	<div class="container">
 		{{#if currentUser}}
-            <div class="row text-center">
+            <div class="row text-center k-test">
             	<div class="col-md-8 col-md-offset-2">
             		<h2 class="section-heading">El proceso de test</h2>
             		<p class="lead">Si quieres trabajar con nosotros debes completar uno de los test relacionados con tu perfil.</p>
@@ -127,34 +127,19 @@
             </div>
             <div class="row text-center">
                 <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <a href='#the-test' class="test" data-test="javascript">
-                            <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                            <i class="fa fa-javascript-logo fa-stack-1x fa-inverse"></i>
-                        </a>
-                    </span>
+                    <a href="#the-test" data-test="javascript"><img src="img/js.svg" alt="JS"></a>
                     <h3 class="service-heading">Javascript</h3>
                     <p class="text-muted">¿Eres un front-end developer?. ¿Te gusta node? ¿Javascript te pone? Este es tu test.</p>
                 </div>
 
                 <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <a href='#the-test' class="test" data-test="q-adopter">
-                            <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                            <i class="fa fa-qa-logo fa-stack-1x fa-inverse"></i>
-                        </a>
-                    </span>
+                    <a href="#the-test" data-test="q-adopter"><img src="img/qa.svg" alt="QA"></a>
                     <h3 class="service-heading">Quality Architect</h3>
                     <p class="text-muted">Si tu perfil es de alguien que sabe de arquitectura tecnologíca, de metodologias ágiles, cuida la calidad, se preocupa por la integración continua, sigue los principios SOLID... este es tu test</p>
                 </div>
 
                 <div class="col-md-4">
-                    <span class="fa-stack fa-4x">
-                        <a href='#the-test' class="test" data-test="friki">
-                            <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                            <i class="fa fa-friki-logo fa-stack-1x fa-inverse"></i>
-                        </a>
-                    </span>
+                    <a href="#the-test" data-test="friki"><img src="img/friki.svg" alt="Friki"></a>
                     <h3 class="service-heading">Friki</h3>
                     <p class="text-muted">¿Quieres subir nota? ¿Eres un friki y te mola demostrarlo? Este test es para completar alguno de los otros dos. Son preguntas con un cierto toque diferente. ¿Te atreves? ;)</p>
                 </div>
