@@ -127,6 +127,11 @@ fieldset[disabled] .btn-primary.active {
     font-weight: 700;
     color: #fff;
     background-color: #FF850C;
+    transition: all 200ms;
+}
+
+.btn-xl:active {
+    transform: scale(.9);
 }
 
 .btn-xl:hover,
