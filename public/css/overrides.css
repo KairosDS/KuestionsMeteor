@@ -59,7 +59,7 @@ header .container {
     }
 
     section {
-        padding-top: 50px;
+        padding-top: 80px;
     }
 
     .k-test__section:not(:last-child) { margin-bottom: 50px; }
