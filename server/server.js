@@ -9,8 +9,8 @@ Meteor.publish("answers", function () {
 Meteor.publish("kteam", function () {
   return KTeam.find({});
 });
-Meteor.publish("khistory", function () {
-  return KTeam.find({});
+Meteor.publish("tests", function () {
+  return Tests.find({});
 });
 
 Meteor.startup( function(){
@@ -48,14 +48,16 @@ Meteor.startup( function(){
           idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 ),
           objId = new Meteor.Collection.ObjectID(), 
           result = 0;
-      //console.log( "USER ID: " + this.userId );
+      //console.log( "USER ID: " + this.userId + t );
       for ( i=0; i<r.length; i++ ){
         var id = r[i].answerID,
             oid , a;
         if (idType) { oid = id; } else { objId._str = id; oid = objId; }
         a = Kuestions.findOne({_id:oid}).answers;
         obj = _.find( a, function(obj) { return ( obj.text === r[i].answerTXT ); } );
-        result += obj.value;
+        //console.log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
+        result += parseInt( obj.value );
+        //console.log( obj.value + " --> " + result );
       }
       // Time
       timeToComplete = 0;
@@ -95,3 +97,19 @@ Meteor.startup( function(){
   });
 
 });
+
+/*
+  service: "github",
+        cliendId: "dc1cdc65081be9e5ef7b",
+        secret: "becf14076e4773a8ef48837372902ee74b01db3d"
+        //clientId: "644c1ff5b4c8d33ea422",
+        //secret: "e50d99825dc23fd4cba59e3a7bf0ff0c3736361d"
+
+
+KAIROS:
+
+cliendId:  03235db285cb8699703d
+secret:   516e841105a890bf5552f662457b28322f700b02
+
+
+*/

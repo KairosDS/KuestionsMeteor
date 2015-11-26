@@ -1,8 +1,8 @@
+Tests 		= new Mongo.Collection("tests");
 Kuestions = new Mongo.Collection("kuestions");
 Answers 	= new Mongo.Collection("answers");
 KTeam 		= new Mongo.Collection("kteam");
-KHistory 	= new Mongo.Collection("khistory");
-Tests 		= new Mongo.Collection("tests");
+
 
 if (Meteor.isClient) {
   Session.set( "nCounter_javascript" , 0 );
@@ -17,7 +17,7 @@ if (Meteor.isClient) {
 
   Meteor.subscribe("kuestions");
   Meteor.subscribe("kteam");
-  Meteor.subscribe("khistory");
+  Meteor.subscribe("tests");
 
   Template.team.helpers({
     jsTeam:function() {
@@ -50,7 +50,10 @@ if (Meteor.isClient) {
           		{t:Session.get("activeTest")}, 
 	          	function( err, response ) { 
 	          		if ( err) { console.log( err, response ); 
-	          		} else { Session.set( "messageTest", response ); }
+	          		} else { 
+	          			var huevopascua = "<div class='huevopascua'><img src='/img/fintest.gif' /></div>";
+	          			Session.set( "messageTest", response + huevopascua ); 
+	          		}
 	          	}
           	) 
           );
@@ -90,6 +93,9 @@ if (Meteor.isClient) {
 	Template.loginSection.helpers({
 		"messageTest": function(){
 			return Session.get("messageTest");
+		},
+		"testList": function(){
+			return Tests.find({}).fetch();
 		}
 	});
 
@@ -105,11 +111,13 @@ if (Meteor.isClient) {
       document.querySelector("[name=answer_test]:checked").blur();
       document.querySelector("[name=answer_test]:checked").checked=false;
       // SAVE RESULT - SEND RESULT
-      Answers.insert( {"user":userId, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
+      var ansusid = userId+Session.get("activeTest");
+      Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
         function( error, result) { 
-          if ( !result ) {
+          if ( error ) {
             // ocultamos div de preguntas y damos mensaje segun error.error (403 no permitido...)
           }
+          console.log( result );
         }
       );
     },
@@ -120,12 +128,13 @@ if (Meteor.isClient) {
       }
       Session.set( "testID", testID.sort(function() {return Math.random() - 0.5;} ) );
       Session.set( "testNotStarted" , false );
+      Session.set( "messageTest", "" );
     }
   });
 
 	Template.loginSection.events({
 		'click .test': function(){
-			var t = $(event.target.parentElement).attr("data-test");
+			var t = $(event.target).attr("data-test");
 			Meteor.call( 
 				"doTest", 
 				{ t:t },
@@ -168,11 +177,3 @@ if (Meteor.isClient) {
   });
 
 }
-
-/*
-  service: "github",
-        cliendId: "dc1cdc65081be9e5ef7b",
-        secret: "becf14076e4773a8ef48837372902ee74b01db3d"
-        //clientId: "644c1ff5b4c8d33ea422",
-        //secret: "e50d99825dc23fd4cba59e3a7bf0ff0c3736361d"
-*/
