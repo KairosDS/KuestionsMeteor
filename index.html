@@ -374,9 +374,9 @@
 	</div>
 </template>
 
-<template name="theTest" id="the-test">
+<template name="theTest">
     {{ #if activeTest }}
-	<div class="container">
+	<div class="container" id="the-test">
         <div class="row">
             <div class="col-md-12 text-center">
                 <h2 class="section-heading"> {{activeTest}} Test</h2>
@@ -406,7 +406,7 @@
         </div>
     </div>
     {{else}}
-    <div class="container">
+    <div class="container" id="the-test">
         <div class="row text-center">
             <div class="col-md-12 col-sm-6 messageText">{{messageTest}}</div>
         </div>
