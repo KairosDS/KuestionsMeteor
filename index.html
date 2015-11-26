@@ -59,12 +59,9 @@
                     <li><a class="page-scroll" href="#team">El equipo</a></li>
                     <!--<li><a class="page-scroll" href="#contact">Contactanos</a></li>-->
                     {{#if currentUser}}
-                    <li><a class="page-scroll logout" href="#">Logout</a></li>
+                    <li class="user" id="user"><i class="fa fa-github"></i> {{currentUser.profile.name}} <a href="#" class="logout">(Salir)</a></li>
                     {{else}}
                     <li><a class="page-scroll" href="#login">Login</a></li>
-                   	{{/if}}
-                    {{#if currentUser}}
-                    <li class="user"><i class="fa fa-github"></i> {{currentUser.profile.name}}</li>
                     {{/if}}
 
                 </ul>
