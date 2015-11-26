@@ -125,19 +125,19 @@
             </div>
             <div class="row text-center">
                 <div class="col-md-4 k-test__section">
-                    <a href="#the-test" data-test="javascript"><img src="img/js.svg" alt="JS"></a>
+                    <a href="#javascript-test" class="test" data-test="javascript"><img src="img/js.svg" alt="JS"></a>
                     <h3 class="service-heading">Javascript</h3>
                     <p class="text-muted">¿Eres un front-end developer?. ¿Te gusta node? ¿Javascript te pone? Este es tu test.</p>
                 </div>
 
                 <div class="col-md-4 k-test__section">
-                    <a href="#the-test" data-test="q-adopter"><img src="img/qa.svg" alt="QA"></a>
+                    <a href="#javascript-test" class="test" data-test="q-adopter"><img src="img/qa.svg" alt="QA"></a>
                     <h3 class="service-heading">Quality Architect</h3>
                     <p class="text-muted">Si tu perfil es de alguien que sabe de arquitectura tecnológica, de metodologías ágiles, cuida la calidad, se preocupa por la integración continua, sigue los principios SOLID... este es tu test</p>
                 </div>
 
                 <div class="col-md-4 k-test__section">
-                    <a href="#the-test" data-test="friki"><img src="img/friki.svg" alt="Friki"></a>
+                    <a href="#javascript-test" class="test" data-test="friki"><img src="img/friki.svg" alt="Friki"></a>
                     <h3 class="service-heading">Friki</h3>
                     <p class="text-muted">¿Quieres subir nota? ¿Eres un friki y te mola demostrarlo? Este test es para completar alguno de los otros dos. Son preguntas con un cierto toque diferente. ¿Te atreves? ;)</p>
                 </div>
@@ -374,7 +374,7 @@
 
 <template name="theTest">
     {{ #if activeTest }}
-	<div class="container" id="the-test">
+	<div class="container">
         <div class="row">
             <div class="col-md-12 text-center">
                 <h2 class="section-heading"> {{activeTest}} Test</h2>
@@ -404,7 +404,7 @@
         </div>
     </div>
     {{else}}
-    <div class="container" id="the-test">
+    <div class="container">
         <div class="row text-center">
             <div class="col-md-12 col-sm-6 messageText">{{messageTest}}</div>
         </div>
