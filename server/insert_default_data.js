@@ -6,7 +6,7 @@ Meteor.startup(function () {
         Results._ensureIndex({ "user": 1}); // mongo: db.results.createIndex({user:1})
         console.log( "Kuestions inserted" );
     } else {
-        console.log( "db exists" );
+        console.log( "Kuestions exists" );
     }
 
     if ( !KTeam.find().fetch().length ){               
@@ -21,6 +21,19 @@ Meteor.startup(function () {
         KTeam.insert( { "name":"Fer"               , "description":"Fer3-PO, habla todas las lenguas mobile",                         "image":"img/team/7.jpg", "twitter_link":"https://twitter.com/",            "twitter":"@"             });
         console.log( "KTeam inserted" );
     } else {
-        console.log( "team exists" );
+        console.log( "KTeam exists" );
+    }
+
+    if ( !Tests.find().fetch().length ) {
+        Tests.insert( { "title":"Javascript para Padawans", "name": "javascript1", "QRand":false, "ARand":false, "parent":{} } );
+        Tests.insert( { "title":"Javascript para Jedis", "name": "javascript2", "QRand":false, "ARand":false, "parent":{} } );
+        Tests.insert( { "title":"Polymer", "name": "", "QRand":false, "ARand":false, "parent":{} } );
+        Tests.insert( { "title":"Programación", "name": "q-adopter1", "QRand":false, "ARand":false, "parent":{} } );
+        Tests.insert( { "title":"Testing", "name": "q-adopter2", "QRand":false, "ARand":false, "parent":{} } );
+        Tests.insert( { "title":"Metodología Agiles", "name": "q-adopter3", "QRand":false, "ARand":false, "parent":{} } );
+        Tests.insert( { "title":"Eres un friki de la Programación?", "name": "friki", "QRand":false, "ARand":false, "parent":{} } );
+        console.log( "Tests inserted" );
+    } else {
+        console.log( "Tests exists" );
     }
 });

@@ -1,7 +1,8 @@
 Kuestions = new Mongo.Collection("kuestions");
-Answers = 	new Mongo.Collection("answers");
-KTeam = 		new Mongo.Collection("kteam");
-KHistory = 	new Mongo.Collection("khistory");
+Answers 	= new Mongo.Collection("answers");
+KTeam 		= new Mongo.Collection("kteam");
+KHistory 	= new Mongo.Collection("khistory");
+Tests 		= new Mongo.Collection("tests");
 
 if (Meteor.isClient) {
   Session.set( "nCounter_javascript" , 0 );
