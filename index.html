@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
   	<title>Kuestions - Kairós Digital Solution</title>
 
@@ -243,7 +244,7 @@
             </div>
             <div class="col-md-8">
                 <ul class="list-inline social-buttons">
-                    <li><a href="http://twitter.com/kairosds"><i class="fa fa-twitter"></i>@kairosds</a></li>
+                    <!-- <li><a href="http://twitter.com/kairosds"><i class="fa fa-twitter"></i>@kairosds</a></li> -->
                     <li><a href="http://www.kairosds.com"><i class="fa fa-link"></i></a></li>
                     <!--<li><a href="#"><i class="fa fa-linkedin"></i></a>
                     </li>-->
@@ -395,7 +396,7 @@
             </div>
             <div class="col-md-6 col-sm-6 test-options text-left">
             	{{#each answers}}
-            		<div><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> {{this.text}}</div>
+            		<label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> {{this.text}}</label>
             	{{/each}}
             </div>
         </div>
