@@ -64,10 +64,6 @@ header .container {
     overflow: hidden;
 }
 
-.test-options {
-    margin-top: 40px;
-}
-
 pre {
     all: inherit;
     text-align: left;
