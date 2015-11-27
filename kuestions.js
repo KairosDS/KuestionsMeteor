@@ -9,6 +9,7 @@ if (Meteor.isClient) {
   Session.set( "nCounter_javascript2", 0 );
   Session.set( "nCounter_polymer", 0 );
   Session.set( "nCounter_Arquitecto", 0 );
+  Session.set( "nCounter_Testing", 0);
   Session.set( "nCounter_friki", 0 );
   Session.set( "testID", [] );
   Session.set( "activeTest", "" );
