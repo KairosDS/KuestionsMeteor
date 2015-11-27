@@ -395,9 +395,13 @@
 				{{{nextCodeExample}}}
             </div>
             <div class="col-md-6 col-sm-6 test-options text-left">
+                <ul>
             	{{#each answers}}
-            		<label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> {{this.text}}</label>
+            		<li>
+                        <label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> {{this.text}}</label>
+                    </li>
             	{{/each}}
+                </ul>
             </div>
         </div>
     </div>
