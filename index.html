@@ -389,7 +389,7 @@
         </div>
         {{ #if testNotStarted }}
         <div id="start_clock" class="row text-center">
-        	<button type="button" class="btn btn-warning start-test"><span class="glyphicon glyphicon-play"></span> Start</button>
+        	<button type="button" class="btn btn-xl btn-warning start-test"><span class="glyphicon glyphicon-play"></span> Start</button>
         </div>
         {{/if}}
         <div class="row text-center">
@@ -399,10 +399,10 @@
 				{{{nextCodeExample}}}
             </div>
             <div class="col-md-6 col-sm-6 test-options text-left">
-                <ul>
+                <ul class="questions-list">
             	{{#each answers}}
             		<li>
-                        <label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> {{this.text}}</label>
+                        <label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> <span class="answer_text">{{this.text}}</span></label>
                     </li>
             	{{/each}}
                 </ul>

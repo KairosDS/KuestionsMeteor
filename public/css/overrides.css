@@ -45,6 +45,24 @@ header .container {
 }
 
 .huevopascua { margin-top: 20px; }
+#start_clock { margin-bottom: 30px; }
+
+.questions-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.questions-list .answer_test {
+    float: left;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.questions-list .answer_text {
+    display: block;
+    overflow: hidden;
+}
 
 
 @media (max-width: 767px) {
