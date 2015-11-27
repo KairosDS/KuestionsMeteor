@@ -27,6 +27,11 @@ if (Meteor.isClient) {
     	return KTeam.find({}).fetch();
     }
   });
+  Template.teamMember.helpers({
+  	withTwitter:function(){
+    	return (this.twitter!="@");
+    }
+  });
 
   Template.theTest.helpers({
   	activeTest: function() {
