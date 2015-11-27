@@ -138,6 +138,7 @@ if (Meteor.isClient) {
 	Template.loginSection.events({
 		'click .test': function(){
 			var t = $(event.target).attr("data-test");
+			Session.set( "testNotStarted" , true );
 			Meteor.call( 
 				"doTest", 
 				{ t:t },
