@@ -65,10 +65,11 @@ Meteor.startup( function(){
       // Guardamos en result
 
       if ( !Results.find( { "user":this.userId+t } ).count() ) {
+        var total = Kuestions.find({test:t}).count();
         Results.insert( { "user":this.userId+t, 
                           "username":Meteor.user().services.github.username, 
                           "email":Meteor.user().services.github.email,
-                          "score":result,
+                          "score":result + " de " + total,
                           "time": timeToComplete });
         return "Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!";
       } else {
