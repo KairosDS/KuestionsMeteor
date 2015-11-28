@@ -34,7 +34,8 @@ Meteor.startup( function(){
 
   Answers.allow({
     'insert': function ( userId, doc) {
-      var answerExist = Answers.find( { "user":userId, "answerID": doc.answerID } ).count();
+      var answerExist = Answers.find( { "user":userId+doc.test, "answerID": doc.answerID } ).count();
+      console.log( "Existe respuesta para user"+userId+" test: "+ doc.test+", answerID"+ doc.answerID+"? " + Answers.find( { "user":userId+doc.test, "answerID": doc.answerID } ).count() );
       return ( userId == Meteor.userId() && !answerExist ); 
     }
   });

@@ -45,10 +45,10 @@ if (Meteor.isClient) {
   		return Session.get( "testNotStarted" );
   	},
     nextQuestion: function(){
-      if ( Session.get("testID").length ) {
+      if ( Session.get("testID").length && !Session.get("testNotStarted") ) {
         var oid = getId( { id:Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))] } ),
         		q = Kuestions.findOne( {_id:oid} );
-        		console.log( oid, Session.get("nCounter_"+Session.get("activeTest")), Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))]);
+        		//console.log( oid, Session.get("nCounter_"+Session.get("activeTest")), Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))]);
         if ( q ) {
           return q.question;
         } else {
@@ -73,7 +73,7 @@ if (Meteor.isClient) {
       }
     },
     nextCodeExample: function(){
-      if ( Session.get("testID").length ) {
+      if ( Session.get("testID").length && !Session.get("testNotStarted") ) {
         var oid = getId( { id:Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))] } ),
         		c = Kuestions.findOne( {_id:oid} );
         if ( c ) {
@@ -86,7 +86,7 @@ if (Meteor.isClient) {
       }
     },
     answers: function(){
-      if ( Session.get("testID").length ) {
+      if ( Session.get("testID").length && !Session.get("testNotStarted") ) {
         var oid = getId( { id:Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))] } ),
         		a = Kuestions.findOne( {_id:oid} );
         if ( a ) {
@@ -124,9 +124,9 @@ if (Meteor.isClient) {
       Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
         function( error, result) { 
           if ( error ) {
-            // ocultamos div de preguntas y damos mensaje segun error.error (403 no permitido...)
+            Session.set( "messageTest","Ocurrio un error guardando tu respuesta en la base de datos" );
           }
-          console.log( result );
+          if ( !result ) { Session.set("nCounter_"+Session.get("activeTest"),9999); Session.set("activeTest",""); }
         }
       );
     },
