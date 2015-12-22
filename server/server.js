@@ -12,6 +12,9 @@ Meteor.publish("kteam", function () {
 Meteor.publish("tests", function () {
   return Tests.find({});
 });
+Meteor.publish("kid", function(){
+  return Kuestions.find({},{fields:{"_id":1}});
+});
 
 Meteor.startup( function(){
   /*var dev = (location.host=="localhost"),
@@ -35,7 +38,9 @@ Meteor.startup( function(){
   Answers.allow({
     'insert': function ( userId, doc) {
       var answerExist = Answers.find( { "user":userId+doc.test, "answerID": doc.answerID } ).count();
-      console.log( "Existe respuesta para user"+userId+" test: "+ doc.test+", answerID"+ doc.answerID+"? " + Answers.find( { "user":userId+doc.test, "answerID": doc.answerID } ).count() );
+      console.log( "¿Existe respuesta para user "+userId+" test: "+ doc.test+", answerID: "+ doc.answerID+"? " + answerExist );
+      console.log( "Answers.find( { \"user\":\""+userId+doc.test+"\", \"answerID\": \""+doc.answerID+"\" } ).count() = " + answerExist );
+      console.log( "Users:  " + userId + " == " + Meteor.userId() );
       return ( userId == Meteor.userId() && !answerExist ); 
     }
   });
@@ -49,16 +54,16 @@ Meteor.startup( function(){
           idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 ),
           objId = new Meteor.Collection.ObjectID(), 
           result = 0;
-      //console.log( "USER ID: " + this.userId + t );
+      console.log( "USER ID: " + this.userId + t );
       for ( i=0; i<r.length; i++ ){
         var id = r[i].answerID,
             oid , a;
         if (idType) { oid = id; } else { objId._str = id; oid = objId; }
         a = Kuestions.findOne({_id:oid}).answers;
         obj = _.find( a, function(obj) { return ( obj.text === r[i].answerTXT ); } );
-        //console.log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
+        console.log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
         result += parseInt( obj.value );
-        //console.log( obj.value + " --> " + result );
+        console.log( obj.value + " --> " + result );
       }
       // Time
       timeToComplete = 0;
@@ -71,6 +76,7 @@ Meteor.startup( function(){
                           "email":Meteor.user().services.github.email,
                           "score":result + " de " + total,
                           "time": timeToComplete });
+        console.log( "Result: " + result + " de " + total + " " + this.userId+t );  
         return "Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!";
       } else {
         return "Este test ya lo realizaste y no es posible hacerlo mas de una vez. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!";

@@ -16,7 +16,7 @@ if (Meteor.isClient) {
   Session.set( "messageTest" , "" );
   Session.set( "testNotStarted" , true );
 
-  var testID = [],
+  var testID,
   		activeTest;
 
   Meteor.subscribe("kuestions");
@@ -132,6 +132,7 @@ if (Meteor.isClient) {
     },
     'click .start-test': function(){
       var ids = Kuestions.find({test:Session.get("activeTest")},{fields:{_id:1}}).fetch();
+      testID = [];
       for(i=0;i<ids.length;i++){
         testID.push( ids[i]._id.toString().replace("ObjectID(\"","").replace("\")",""));
       }
