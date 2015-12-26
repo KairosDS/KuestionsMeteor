@@ -41,12 +41,13 @@ Meteor.startup( function(){
       console.log( "¿Existe respuesta para user "+userId+" test: "+ doc.test+", answerID: "+ doc.answerID+"? " + answerExist );
       console.log( "Answers.find( { \"user\":\""+userId+doc.test+"\", \"answerID\": \""+doc.answerID+"\" } ).count() = " + answerExist );
       console.log( "Users:  " + userId + " == " + Meteor.userId() );
-      return ( userId == Meteor.userId() && !answerExist ); 
+      var resp = ( userId == Meteor.userId() )?( ( !answerExist )?"OK":"NEXT" ):false;
+      return ( userId == Meteor.userId() ); 
     }
   });
 
   Meteor.methods({
-    'testEnd': function(args){
+    testEnd: function(args){
       console.log( "Terminó el usuario " + this.userId );
       // Calc score
       var t = args.t,
@@ -101,6 +102,13 @@ Meteor.startup( function(){
         return "Test ya realizado. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!";
       }
       
+    },
+    getQuestionsAnswered: function( args ){
+      var ansusid = args.ansusid,
+          testID = args.testID;
+      // Recuperar las preguntas que contesto el usuario de Answers
+      // Eliminar estas del array de testID
+      return testID;
     }
   });
 

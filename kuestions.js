@@ -50,22 +50,19 @@ if (Meteor.isClient) {
         		q = Kuestions.findOne( {_id:oid} );
         		//console.log( oid, Session.get("nCounter_"+Session.get("activeTest")), Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))]);
         if ( q ) {
-          return q.question;
+      			return q.question;	
         } else {
-          Session.set(
-          	"endMessage", 
-          	Meteor.call( 
-          		"testEnd", 
-          		{t:Session.get("activeTest")}, 
-	          	function( err, response ) { 
-	          		if ( err) { console.log( err, response ); 
-	          		} else { 
-	          			var huevopascua = "<div class='huevopascua'><img src='/img/fintest.gif' /></div>";
-	          			Session.set( "messageTest", response + huevopascua ); 
-	          		}
-	          	}
-          	) 
-          );
+        	Meteor.call( 
+        		"testEnd", 
+        		{t:Session.get("activeTest")}, 
+          	function( err, response ) { 
+          		if ( err) { console.log( err, response ); 
+          		} else { 
+          			var huevopascua = "<div class='huevopascua'><img src='/img/fintest.gif' /></div>";
+          			showMesg(  response + huevopascua ); 
+          		}
+          	}
+        	); 
           return "";
         }
       } else {
@@ -116,29 +113,48 @@ if (Meteor.isClient) {
       var answerID = Session.get( "testID" )[Session.get("nCounter_"+Session.get("activeTest"))],
           answerTXT = document.querySelector("[name=answer_test]:checked").value,
           userId = Meteor.userId();
-      Session.set( "nCounter_"+Session.get("activeTest"), Session.get( "nCounter_"+Session.get("activeTest") )+1 );
-      document.querySelector("[name=answer_test]:checked").blur();
-      document.querySelector("[name=answer_test]:checked").checked=false;
       // SAVE RESULT - SEND RESULT
       var ansusid = userId+Session.get("activeTest");
-      Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
-        function( error, result) { 
-          if ( error ) {
-            Session.set( "messageTest","Ocurrio un error guardando tu respuesta en la base de datos" );
-          }
-          if ( !result ) { Session.set("nCounter_"+Session.get("activeTest"),9999); Session.set("activeTest",""); }
-        }
-      );
+      if ( Session.get("activeTest") !== "" && ansusid && answerID && answerTXT ) {
+      	if ( Answers.find({"user":ansusid, "answerID":answerID , "test":Session.get("activeTest")}).count() ) {
+      		console.log( "Question already answered. Next" );
+      	} else {
+		      Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
+		        function( error, result) { 
+		          if ( error ) {
+		            showMesg( "Ocurrio un error guardando tu respuesta en la base de datos" );
+		          }
+		          if ( !result ) { Session.set("nCounter_"+Session.get("activeTest"),9999); Session.set("activeTest",""); }
+		          else {
+		          	showNextQuestion();
+		          }
+		        }
+		      );
+		    }
+	    } else {
+	    	showMesg( "Ocurrio un error guardando tu respuesta en la base de datos" );
+	    }
     },
     'click .start-test': function(){
-      var ids = Kuestions.find({test:Session.get("activeTest")},{fields:{_id:1}}).fetch();
+      var ids = Kuestions.find({test:Session.get("activeTest")},{fields:{_id:1}}).fetch(),
+      		userId = Meteor.userId(),
+        	ansusid = userId+Session.get("activeTest");
       testID = [];
       for(i=0;i<ids.length;i++){
         testID.push( ids[i]._id.toString().replace("ObjectID(\"","").replace("\")",""));
       }
-      Session.set( "testID", testID ); //.sort(function() {return Math.random() - 0.5;} ) );
-      Session.set( "testNotStarted" , false );
-      Session.set( "messageTest", "" );
+      Meteor.call( 
+				"getQuestionsAnswered", 
+				{ansusid:ansusid, testID:testID},
+				function( err, response ) { 
+		    		if ( err) { console.log( err, response ); 
+		    		} else { 
+				 			Session.set( "testID", response ); //.sort(function() {return Math.random() - 0.5;} ) );
+				      Session.set( "testNotStarted" , false );
+				      showMesg(  "" );
+		    		}
+		    	}
+			);
     }
   });
 
@@ -151,13 +167,14 @@ if (Meteor.isClient) {
 				{ t:t },
 				function( err, response ){
 					if ( err ) { console.log( err, response ); }
-					if ( response === "" ) {
-						Session.set( "activeTest", t );
-						Session.set( "messageTest", response );
-						Session.set( "testNotStarted" , true );
-					} else {
-						Session.set( "activeTest", "" );
-						Session.set( "messageTest", response );
+					else {
+						showMesg( response );
+						if ( response === "" ) {
+							Session.set( "activeTest", t );
+							Session.set( "testNotStarted" , true );
+						} else {
+							Session.set( "activeTest", "" );
+						}
 					}
 				});
 		}
@@ -180,6 +197,17 @@ if (Meteor.isClient) {
         oid._str = id;
       }
       return oid;
+    };
+    showNextQuestion = function(){
+      Session.set( "nCounter_"+Session.get("activeTest"), Session.get( "nCounter_"+Session.get("activeTest") )+1 );
+    	document.querySelector("[name=answer_test]:checked").blur();
+			document.querySelector("[name=answer_test]:checked").checked=false;
+    };
+    endTest = function(){
+
+    };
+    showMesg = function( text ) {
+    	Session.set( "messageTest", text );
     };
   });
 
