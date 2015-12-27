@@ -143,6 +143,7 @@ if (Meteor.isClient) {
       for(i=0;i<ids.length;i++){
         testID.push( ids[i]._id.toString().replace("ObjectID(\"","").replace("\")",""));
       }
+      Session.set( "testNotStarted" , false );
       Meteor.call( 
 				"getQuestionsAnswered", 
 				{ansusid:ansusid, testID:testID},
@@ -150,7 +151,6 @@ if (Meteor.isClient) {
 		    		if ( err) { console.log( err, response ); 
 		    		} else { 
 				 			Session.set( "testID", response ); //.sort(function() {return Math.random() - 0.5;} ) );
-				      Session.set( "testNotStarted" , false );
 				      showMesg(  "" );
 		    		}
 		    	}
