@@ -5,12 +5,15 @@ KTeam 		= new Mongo.Collection("kteam");
 
 
 if (Meteor.isClient) {
-  Session.set( "nCounter_javascript1", 0 );
+
+  /*Session.set( "nCounter_javascript1", 0 );
   Session.set( "nCounter_javascript2", 0 );
   Session.set( "nCounter_polymer", 0 );
   Session.set( "nCounter_Arquitecto", 0 );
   Session.set( "nCounter_Testing", 0);
   Session.set( "nCounter_friki", 0 );
+  */
+
   Session.set( "testID", [] );
   Session.set( "activeTest", "" );
   Session.set( "messageTest" , "" );
@@ -212,7 +215,13 @@ if (Meteor.isClient) {
   });
 
   Tracker.autorun(function(){
-  	
+  	var t = Tests.find({}).fetch();
+	  for (var k in t){
+	  	for (var k2 in t[k].tests){
+	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );		
+	  		console.log( "nCounter_"+t[k].tests[k2].name );
+	  	}
+	  }
   });
 
 }
