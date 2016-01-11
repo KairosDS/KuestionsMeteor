@@ -76,7 +76,8 @@ Meteor.startup( function(){
                           "username":Meteor.user().services.github.username, 
                           "email":Meteor.user().services.github.email,
                           "score":result + " de " + total,
-                          "time": timeToComplete });
+                          "time": timeToComplete,
+                          "date": new Date() });
         console.log( "Result: " + result + " de " + total + " " + this.userId+t );  
         return "Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!";
       } else {
