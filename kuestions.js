@@ -219,7 +219,7 @@ if (Meteor.isClient) {
 	  for (var k in t){
 	  	for (var k2 in t[k].tests){
 	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );		
-	  		console.log( "nCounter_"+t[k].tests[k2].name );
+	  		//console.log( "nCounter_"+t[k].tests[k2].name );
 	  	}
 	  }
   });
