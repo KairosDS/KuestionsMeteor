@@ -3,6 +3,7 @@ Kuestions = new Mongo.Collection("kuestions");
 Answers 	= new Mongo.Collection("answers");
 KTeam 		= new Mongo.Collection("kteam");
 
+Results = new Mongo.Collection("results");
 
 if (Meteor.isClient) {
 
@@ -218,7 +219,8 @@ if (Meteor.isClient) {
   	var t = Tests.find({}).fetch();
 	  for (var k in t){
 	  	for (var k2 in t[k].tests){
-	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );		
+	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );
+	  		Session.set( "Timer_"+t[k].tests[k2].name, 100 );
 	  		//console.log( "nCounter_"+t[k].tests[k2].name );
 	  	}
 	  }
