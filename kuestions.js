@@ -3,8 +3,6 @@ Kuestions = new Mongo.Collection("kuestions");
 Answers 	= new Mongo.Collection("answers");
 KTeam 		= new Mongo.Collection("kteam");
 
-Results = new Mongo.Collection("results");
-
 if (Meteor.isClient) {
 
   /*Session.set( "nCounter_javascript1", 0 );
@@ -19,6 +17,19 @@ if (Meteor.isClient) {
   Session.set( "activeTest", "" );
   Session.set( "messageTest" , "" );
   Session.set( "testNotStarted" , true );
+  Session.set("consoleOpen", false);
+
+	/* DETECT CONSOLE OPEN
+	var element = new Image();
+	element.__defineGetter__('id', function() {
+    Session.set("consoleOpen", true);
+	});
+	setInterval(function() {
+		Session.set("consoleOpen",false);
+		console.log(element);
+    console.clear();
+	},1000);	
+*/
 
   var testID,
   		activeTest;
@@ -110,6 +121,8 @@ if (Meteor.isClient) {
 	});
 
 
+
+
 //********  EVENTS  *************//
 
   Template.theTest.events({
@@ -120,23 +133,39 @@ if (Meteor.isClient) {
       // SAVE RESULT - SEND RESULT
       var ansusid = userId+Session.get("activeTest");
       if ( Session.get("activeTest") !== "" && ansusid && answerID && answerTXT ) {
-      	if ( Answers.find({"user":ansusid, "answerID":answerID , "test":Session.get("activeTest")}).count() ) {
-      		console.log( "Question already answered. Next" );
-      	} else {
-		      Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
-		        function( error, result) { 
-		          if ( error ) {
-		            showMesg( "Ocurrio un error guardando tu respuesta en la base de datos" );
-		          }
-		          if ( !result ) { Session.set("nCounter_"+Session.get("activeTest"),9999); Session.set("activeTest",""); }
-		          else {
-		          	showNextQuestion();
-		          }
-		        }
-		      );
-		    }
+      	Meteor.call("questionAlreadyAnswered", 
+      		{	ansusid: ansusid, answerID: answerID, test:Session.get("activeTest") },
+      		function( err, response ) {
+      			if ( err) { 
+      				console.log( err, response ); 
+      				showMesg( "Ocurrio un error en la base de datos." );
+		    		} else { 
+		    			if ( response ) {
+		    				showMesg( "<p>La pregunta anterior ya fue respondida anteriormente</p>" );
+		    				showNextQuestion();
+		    			} else {
+		    				showMesg( "" );
+					      var aId = Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
+					        function( error, result) { 
+					          if ( error ) {
+					          	console.log( " ERR: " + error );
+					            showMesg( "Ocurrio un error guardando tu respuesta en la base de datos" );
+					          } else {
+						          //console.log( "RES: " + result );
+						          if ( !result ) { 
+						          	showMesg( "Tu respuesta devolvió un error guardandola en la base de datos" );
+						          } else {
+						          	showNextQuestion();
+						          }
+						        }
+					        }
+			      		);
+			      	}
+				    }
+      		}
+      	);
 	    } else {
-	    	showMesg( "Ocurrio un error guardando tu respuesta en la base de datos" );
+	    	showMesg( "Tu respuesta no se guardo en la base de datos" );
 	    }
     },
     'click .start-test': function(){
@@ -184,6 +213,11 @@ if (Meteor.isClient) {
 		}
 	});
 
+  Template.main.helpers({
+    "consoleOpen":function(){
+      return ( Session.get("consoleOpen") )?"TRUE":"FALSE";
+    }
+  });
   Template.main.events({
     'click .logout': function() {
       Meteor.logout();
@@ -219,8 +253,7 @@ if (Meteor.isClient) {
   	var t = Tests.find({}).fetch();
 	  for (var k in t){
 	  	for (var k2 in t[k].tests){
-	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );
-	  		Session.set( "Timer_"+t[k].tests[k2].name, 100 );
+	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );		
 	  		//console.log( "nCounter_"+t[k].tests[k2].name );
 	  	}
 	  }
