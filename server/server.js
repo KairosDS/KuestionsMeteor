@@ -62,7 +62,7 @@ Meteor.startup( function(){
       //var resp = ( userId == Meteor.userId() )?( ( !answerExist )?"OK":"NEXT" ):false;
       var resp = ( userId == Meteor.userId() );
       console.log( "RESP: " + resp );
-      return resp; //( userId == Meteor.userId() ); 
+      return resp; //( userId == Meteor.userId() );
     }
   });
 
@@ -81,7 +81,7 @@ Meteor.startup( function(){
       var t = args.t,
           r = Answers.find({"user":this.userId+t}).fetch(),
           idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 ),
-          objId = new Meteor.Collection.ObjectID(), 
+          objId = new Meteor.Collection.ObjectID(),
           result = 0;
       console.log( "USER ID: " + this.userId + t );
       // CALC RESULT
@@ -103,8 +103,8 @@ Meteor.startup( function(){
       // SAVE SCORE
       if ( !Results.find( { "user":this.userId+t } ).count() ) {
         var total = Kuestions.find({test:t}).count();
-        Results.insert( { "user":this.userId+t, 
-                          "username":Meteor.user().services.github.username, 
+        Results.insert( { "user":this.userId+t,
+                          "username":Meteor.user().services.github.username,
                           "email":Meteor.user().services.github.email,
                           "score":result + " de " + total,
                           "time": timeToComplete,
@@ -117,7 +117,7 @@ Meteor.startup( function(){
         if ( res.length > 0 ) {
           var percents = {
             "javascript1":35, "javascript2":60, "polymer":5,
-            "Arquitecto":100, 
+            "Arquitecto":100,
             "Testing":100,
             "design":100,
             "friki":100
@@ -128,7 +128,7 @@ Meteor.startup( function(){
             var el = res[i];
             var test = el.user.substr(17);
             var s = el.score.split(" de ");
-            var rN = resName[test]; 
+            var rN = resName[test];
             console.log( "TEST: "+test+" rN:"+rN+" %:"+percents[test]);
             rt[rN] += percents[test] * s[0] / s[1];
           }
@@ -136,9 +136,9 @@ Meteor.startup( function(){
           Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2) });
         }
 
-        return "Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!";
+        return "<h3>Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!</h3>";
       } else {
-        return "Este test ya lo realizaste y no es posible hacerlo mas de una vez. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!";
+        return "<h3>Este test ya lo realizaste y no es posible hacerlo mas de una vez. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!</h3>";
       }
     },
     getId: function( args ){
@@ -159,9 +159,9 @@ Meteor.startup( function(){
         return "";
       } else {
         console.log( "Test " + t + " ya realizado para el usuario " + this.userId );
-        return "Test ya realizado. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!";
+        return "<h3>Test ya realizado. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!</h3>";
       }
-      
+
     },
     getQuestionsAnswered: function( args ){
       var ansusid = args.ansusid,
