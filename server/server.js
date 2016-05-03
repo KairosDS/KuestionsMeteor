@@ -1,5 +1,7 @@
 Results = new Mongo.Collection("results");
 Ranking   = new Mongo.Collection("ranking");
+TimeCounter = new Mongo.Collection("timecounter");
+Active = new Meteor.Collection("active",{connection:null});
 
 Meteor.publish("kuestions", function () {
   return Kuestions.find({},{fields:{"_id":1,"test":1,"question":1,"codeExample":1,"answers.text":1}});
@@ -13,28 +15,24 @@ Meteor.publish("kteam", function () {
 Meteor.publish("tests", function () {
   return Tests.find({});
 });
-Meteor.publish("kid", function(){
-  return Kuestions.find({},{fields:{"_id":1}});
+Meteor.publish("active", function () {
+    return Active.find({});
 });
 
+var timeId = {};
+var timeEndTest = {};
+var timeIniTest = {};
+var timeByQuestion = 45; //seconds
+var maxTime = {
+        "javascript1": 11*timeByQuestion,
+        "javascript2": 13*timeByQuestion,
+        "polymer": 4*timeByQuestion,
+        "friki": 6*timeByQuestion,
+        "Arquitecto": 35*timeByQuestion,
+        "Testing": 10*timeByQuestion
+      };
+
 Meteor.startup( function(){
-  /*var dev = (location.host=="localhost"),
-        clientid = (dev)?"dc1cdc65081be9e5ef7b":"d3ecf49b839fc43d6e26",
-        secret = (dev)?"becf14076e4773a8ef48837372902ee74b01db3d":"84f74c16d05b9cb15b444358d5c2b003d355b996";
-
-  console.log( "---> " + dev );
-
-  ServiceConfiguration.configurations.upsert(
-    { service: "github" },
-    {
-      $set: {
-        clientId: clientid,
-        loginStyle: "popup",
-        secret: secret
-      }
-    }
-  );*/
-  var timeIniTest, timeEndTest;
   var getDiff = function( d2, d1 ) {
     var diff=d2-d1,sign=diff<0?-1:1,milliseconds,seconds,minutes,hours,days;
     diff/=sign; // or diff=Math.abs(diff);
@@ -52,6 +50,19 @@ Meteor.startup( function(){
     console.info(res);
     return res;
   };
+  var _updateTimeCounter = function(user,test){
+    Active.remove({"u":user,"t":test});
+    TimeCounter.update({"user":user,"test":test},{"user":user,"test":test,"timeIni":timeIniTest[this.userId],"timeEnd":timeEndTest[this.userId]});
+  };
+  var timeoutStart = function(args){
+    var user = args.user;
+    var test = args.test;
+    var timeToClock = args.timeToClock;
+    timeId[user+test] = Meteor.setTimeout(function(){
+      _updateTimeCounter(user,test);
+      console.log("Tiempo " + (timeEndTest[this.userId]-timeIniTest[this.userId]) + " segundos para el test superado");
+    }, timeToClock);
+  };
 
   Answers.allow({
     'insert': function ( userId, doc) {
@@ -67,6 +78,35 @@ Meteor.startup( function(){
   });
 
   Meteor.methods({
+    getQT: function(args){
+      return maxTime;
+    },
+    testStart: function(args){
+      var user = args.u;
+      var test = args.t;
+      var usertest = user + test;
+      var timeToClock = 0;
+      if (!TimeCounter.find().fetch().length || !TimeCounter.find({"user":user,"test":test}).fetch().length) {
+        timeIniTest[this.userId] = new Date();
+        TimeCounter.insert({"user":user,"test":test,"timeIni":timeIniTest[this.userId],"timeEnd":0});
+        Active.insert({"u":user,"t":test});
+        timeToClock = maxTime[test]*1000;
+        //console.log("apunto el tiempo en el servidor para usuario " + user + " para el test " + test + ". Tiene maximo " + maxTime[test] + " segundos");
+      } else {
+        // Indicarle que ya comenzó el test en algun momento y no lo terminó
+        var tc = TimeCounter.find({"user":user,"test":test}).fetch();
+        //console.log( tc, tc[0], tc[0].timeIni );
+        timeIniTest[this.userId] = new Date(tc[0].timeIni);
+        var now = new Date();
+        var timeVar = now.getTime() - timeIniTest[this.userId];
+        timeToClock = maxTime[test]*1000 - timeVar;
+        console.log(timeToClock);
+        console.log("Test ya comenzado en algun momento y no lo terminó. Le quedan " + (timeToClock/1000) + " segundos" );
+      }
+      timeEndTest[this.userId] = timeIniTest[this.userId].getTime() + timeToClock;
+      timeoutStart({user:user,test:test,timeToClock:timeToClock});
+      return timeToClock;
+    },
     questionAlreadyAnswered: function(args){
       var ansusid = args.ansusid;
       var answerID = args.answerID;
@@ -75,8 +115,11 @@ Meteor.startup( function(){
       return (resp!==0);
     },
     testEnd: function(args){
+      Meteor.clearTimeout(timeId[this.userId+args.t]);
+      //console.log("Clear Timeout " + timeId[this.userId+args.t]);
+      //clockActive = false;
       console.log( "Terminó el usuario " + this.userId );
-      timeEndTest = new Date();
+      timeEndTest[this.userId] = new Date();
       // Calc score
       var t = args.t,
           r = Answers.find({"user":this.userId+t}).fetch(),
@@ -95,13 +138,15 @@ Meteor.startup( function(){
         result += parseInt( obj.value );
         console.log( obj.value + " --> " + result );
       }
-      // Time (PENDIENTE)
-      timeToComplete = getDiff( timeEndTest, timeIniTest );
+      // Time
+      timeToComplete = getDiff( timeEndTest[this.userId], timeIniTest[this.userId] );
+      console.log( "end: " + timeEndTest[this.userId] + ",ini: "+ timeIniTest[this.userId] );
       console.log( "Time to complete test: " + timeToComplete );
+      _updateTimeCounter(this.userId,args.t);
       // Guardamos en result
 
       // SAVE SCORE
-      if ( !Results.find( { "user":this.userId+t } ).count() ) {
+      if ( !Results.find( { "user":this.userId+t } ).count() && t) {
         var total = Kuestions.find({test:t}).count();
         Results.insert( { "user":this.userId+t,
                           "username":Meteor.user().services.github.username,
@@ -110,7 +155,9 @@ Meteor.startup( function(){
                           "time": timeToComplete,
                           "date": new Date() });
         console.log( "Result: " + result + " de " + total + " para " + this.userId + " en el test " + t );
-
+        //GET EMAILS TO ALERT
+        alertEmails = KTeam.find({$where: "this.alert_email==true"}).fetch();
+        console.log(alertEmails);
         // SAVE GLOBAL RANKING
         var username = Meteor.user().services.github.username;
         var res = Results.find({"username":username}).fetch();
@@ -155,7 +202,6 @@ Meteor.startup( function(){
     doTest: function( args ) {
       var t = args.t;
       if ( !Results.find( { "user":this.userId+t } ).count() ) {
-        timeIniTest = new Date();
         return "";
       } else {
         console.log( "Test " + t + " ya realizado para el usuario " + this.userId );

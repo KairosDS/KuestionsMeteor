@@ -1,3 +1,9 @@
+.gitignore
+.meteor
 .meteor/local
 .meteor/meteorite
+jsonData
 private
+deploy
+.deploy
+kuestions

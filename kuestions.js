@@ -3,21 +3,28 @@ Kuestions = new Mongo.Collection("kuestions");
 Answers 	= new Mongo.Collection("answers");
 KTeam 		= new Mongo.Collection("kteam");
 
+maxTime = {};
+clockActive = false;
+gradclock = 0;
+
 if (Meteor.isClient) {
 
-  /*Session.set( "nCounter_javascript1", 0 );
-  Session.set( "nCounter_javascript2", 0 );
-  Session.set( "nCounter_polymer", 0 );
-  Session.set( "nCounter_Arquitecto", 0 );
-  Session.set( "nCounter_Testing", 0);
-  Session.set( "nCounter_friki", 0 );
-  */
+  Active = new Meteor.Collection("active");
 
   Session.set( "testID", [] );
   Session.set( "activeTest", "" );
   Session.set( "messageTest" , "" );
   Session.set( "testNotStarted" , true );
-  Session.set("consoleOpen", false);
+  Session.set( "consoleOpen", false );
+  Session.set( "activeTime", false );
+
+
+  Meteor.call("getQT",{},function( err, response ) {
+              if ( err) { console.log( err, response );
+              } else {
+                maxTime = response;
+              }
+  });
 
 	/* DETECT CONSOLE OPEN
 	var element = new Image();
@@ -28,15 +35,16 @@ if (Meteor.isClient) {
 		Session.set("consoleOpen",false);
 		console.log(element);
     console.clear();
-	},1000);	
+	},1000);
 */
 
-  var testID,
-  		activeTest;
+  var testID;
+  var activeTest;
 
   Meteor.subscribe("kuestions");
   Meteor.subscribe("kteam");
   Meteor.subscribe("tests");
+  Meteor.subscribe("active");
 
   Template.team.helpers({
     jsTeam:function() {
@@ -65,19 +73,22 @@ if (Meteor.isClient) {
         		q = Kuestions.findOne( {_id:oid} );
         		//console.log( oid, Session.get("nCounter_"+Session.get("activeTest")), Session.get("testID")[Session.get("nCounter_"+Session.get("activeTest"))]);
         if ( q ) {
-      			return q.question;	
+      			return q.question;
         } else {
-        	Meteor.call( 
-        		"testEnd", 
-        		{t:Session.get("activeTest")}, 
-          	function( err, response ) { 
-          		if ( err) { console.log( err, response ); 
-          		} else { 
+        	Meteor.call(
+        		"testEnd",
+        		{t:Session.get("activeTest")},
+          	function( err, response ) {
+          		if ( err) { console.log( err, response );
+          		} else {
           			var huevopascua = "<div class='huevopascua'><img src='/img/fintest.gif' /></div>";
-          			showMesg(  response + huevopascua ); 
+          			showMesg(  response + huevopascua );
+                Session.set("activeTest", "");
+                Session.set("testNotStarted", true);
           		}
           	}
-        	); 
+        	);
+          $('#clock').hide();
           return "";
         }
       } else {
@@ -133,26 +144,26 @@ if (Meteor.isClient) {
       // SAVE RESULT - SEND RESULT
       var ansusid = userId+Session.get("activeTest");
       if ( Session.get("activeTest") !== "" && ansusid && answerID && answerTXT ) {
-      	Meteor.call("questionAlreadyAnswered", 
+      	Meteor.call("questionAlreadyAnswered",
       		{	ansusid: ansusid, answerID: answerID, test:Session.get("activeTest") },
       		function( err, response ) {
-      			if ( err) { 
-      				console.log( err, response ); 
+      			if ( err) {
+      				console.log( err, response );
       				showMesg( "Ocurrio un error en la base de datos." );
-		    		} else { 
+		    		} else {
 		    			if ( response ) {
 		    				showMesg( "<p>La pregunta anterior ya fue respondida anteriormente</p>" );
 		    				showNextQuestion();
 		    			} else {
 		    				showMesg( "" );
 					      var aId = Answers.insert( {"user":ansusid, "answerID":answerID , "answerTXT":answerTXT, "test":Session.get("activeTest") },
-					        function( error, result) { 
+					        function( error, result) {
 					          if ( error ) {
 					          	console.log( " ERR: " + error );
 					            showMesg( "Ocurrio un error guardando tu respuesta en la base de datos" );
 					          } else {
 						          //console.log( "RES: " + result );
-						          if ( !result ) { 
+						          if ( !result ) {
 						          	showMesg( "Tu respuesta devolvió un error guardandola en la base de datos" );
 						          } else {
 						          	showNextQuestion();
@@ -177,12 +188,26 @@ if (Meteor.isClient) {
         testID.push( ids[i]._id.toString().replace("ObjectID(\"","").replace("\")",""));
       }
       Session.set( "testNotStarted" , false );
-      Meteor.call( 
-				"getQuestionsAnswered", 
+      $('#clock').show();
+      Meteor.call("testStart",
+        {"u":userId, "t":Session.get("activeTest")},
+        function(err, response){
+          if ( err ) { console.log( err, response ); }
+          else {
+            Session.set("activeTime",true);
+            var now = new Date();
+            gradclock = new Date(now.getTime() + response );
+            clockActive = true;
+            requestAnimationFrame(render);
+            //console.log("Mostramos el reloj en cuenta a atrás");
+          }
+        });
+      Meteor.call(
+				"getQuestionsAnswered",
 				{ansusid:ansusid, testID:testID},
-				function( err, response ) { 
-		    		if ( err) { console.log( err, response ); 
-		    		} else { 
+				function( err, response ) {
+		    		if ( err) { console.log( err, response );
+		    		} else {
 				 			Session.set( "testID", response ); //.sort(function() {return Math.random() - 0.5;} ) );
 				      showMesg(  "" );
 		    		}
@@ -195,8 +220,8 @@ if (Meteor.isClient) {
 		'click .test': function(){
 			var t = $(event.target).attr("data-test");
 			Session.set( "testNotStarted" , true );
-			Meteor.call( 
-				"doTest", 
+			Meteor.call(
+				"doTest",
 				{ t:t },
 				function( err, response ){
 					if ( err ) { console.log( err, response ); }
@@ -222,6 +247,10 @@ if (Meteor.isClient) {
     'click .logout': function() {
       Meteor.logout();
     }
+  });
+
+  Template.main.onRendered(function(){
+    $('#clock').hide();
   });
 
   Meteor.startup( function(){
@@ -253,10 +282,34 @@ if (Meteor.isClient) {
   	var t = Tests.find({}).fetch();
 	  for (var k in t){
 	  	for (var k2 in t[k].tests){
-	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );		
+	  		Session.set( "nCounter_"+t[k].tests[k2].name, 0 );
 	  		//console.log( "nCounter_"+t[k].tests[k2].name );
 	  	}
 	  }
+
+    var isActive = (Active.find({u:Meteor.userId(),t:Session.get("activeTest")}).fetch().length===1);
+    console.log( "isActive:"+isActive + " - test:" + Session.get("activeTest") + " - test Start?" + Session.get( "testNotStarted") + " - activeTime:" + Session.get("activeTime") );
+    if (!isActive && Session.get("activeTest")!=="" && !Session.get( "testNotStarted") && Session.get("activeTime")) {
+      //console.log("TIME OUT");
+      Meteor.call(
+            "testEnd",
+            {t:Session.get("activeTest")},
+            function( err, response ) {
+              if ( err) { console.log( err, response );
+              } else {
+                $('#clock').hide();
+                clockActive = false;
+                var text = '<h3 class="section-subheading text-muted">Lo sentimos. Finalizó el tiempo que tenias para realizar el test.</h3>';
+                showMesg( text );
+                Session.set("activeTest", "");
+                Session.set("testNotStarted", true);
+              }
+            }
+          );
+      Session.set("activeTest", "");
+      Session.set("activeTime", false );
+    }
+
   });
 
 }
