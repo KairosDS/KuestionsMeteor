@@ -288,7 +288,7 @@ if (Meteor.isClient) {
 	  }
 
     var isActive = (Active.find({u:Meteor.userId(),t:Session.get('activeTest')}).fetch().length===1);
-    console.log("isActive:"+isActive + " - test:" + Session.get('activeTest') + " - test NotStarted:" + Session.get('testNotStarted') + " - activeTime:" + Session.get('activeTime'));
+    // console.log("isActive:"+isActive + " - test:" + Session.get('activeTest') + " - test NotStarted:" + Session.get('testNotStarted') + " - activeTime:" + Session.get('activeTime'));
     if (!isActive && Session.get('activeTest')!=='' && !Session.get('testNotStarted') && Session.get('activeTime')) {
       //console.log("TIME OUT");
       Meteor.call(
