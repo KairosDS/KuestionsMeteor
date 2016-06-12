@@ -8,6 +8,22 @@ clockActive = false;
 gradclock = 0;
 
 if (Meteor.isClient) {
+  var debugMode = false;
+  var _log = function(msg) {
+    if ( debugMode ) {
+      console.log( msg );
+    }
+  };
+  var _resetCounters = function(){
+    //console.log("resetCounters");
+    var t = Tests.find({}).fetch();
+    for (var k in t){
+      for (var k2 in t[k].tests){
+        Session.set('nCounter_'+t[k].tests[k2].name, 0);
+        _log('nCounter_'+t[k].tests[k2].name+": "+Session.get('nCounter_'+t[k].tests[k2].name));
+      }
+    }
+  };
 
   Active = new Meteor.Collection('active');
 
@@ -17,6 +33,7 @@ if (Meteor.isClient) {
   Session.set('testNotStarted' , true);
   Session.set('consoleOpen', false);
   Session.set('activeTime', false);
+  Session.set('textEndCalledNow', false);
 
 
   Meteor.call('getQT',{},function(err, response) {
@@ -75,6 +92,7 @@ if (Meteor.isClient) {
         if (q) {
       			return q.question;
         } else {
+          Session.set('textEndCalledNow', true);
         	Meteor.call(
         		'testEnd',
         		{t:Session.get('activeTest')},
@@ -84,7 +102,9 @@ if (Meteor.isClient) {
           			var huevopascua = "<div class='huevopascua'><img src='/img/fintest.gif' /></div>";
           			showMesg( response + huevopascua);
                 Session.set('activeTest', '');
+                Session.set('activeTime', false);
                 Session.set('testNotStarted', true);
+                Session.set('textEndCalledNow', false);
           		}
           	}
         	);
@@ -191,7 +211,7 @@ if (Meteor.isClient) {
       $('#clock').show();
       Meteor.call('testStart',
         {'u':userId, 't':Session.get('activeTest')},
-        function(err, response){
+        function(err, response){  
           if (err) { console.log(err, response); }
           else {
             Session.set('activeTime',true);
@@ -201,18 +221,19 @@ if (Meteor.isClient) {
             requestAnimationFrame(render);
             //console.log("Mostramos el reloj en cuenta a atrás");
           }
-        });
+        }
+      );
       Meteor.call(
-				'getQuestionsAnswered',
-				{ansusid:ansusid, testID:testID},
-				function(err, response) {
-		    		if (err) { console.log(err, response);
-		    		} else {
-				 			Session.set('testID', response); //.sort(function() {return Math.random() - 0.5;}));
-				      showMesg( '');
-		    		}
-		    	}
-			);
+        'getQuestionsAnswered',
+        {ansusid:ansusid, testID:testID},
+        function(err, response) {
+          if (err) { console.log(err, response);
+          } else {
+            Session.set('testID', response); //.sort(function() {return Math.random() - 0.5;}));
+            showMesg( '');
+          }
+        }
+      );
     }
   });
 
@@ -220,6 +241,7 @@ if (Meteor.isClient) {
 		'click .test': function(){
 			var t = $(event.target).attr('data-test');
 			Session.set('testNotStarted' , true);
+      _resetCounters();
 			Meteor.call(
 				'doTest',
 				{ t:t },
@@ -230,6 +252,8 @@ if (Meteor.isClient) {
 						if (response === '') {
 							Session.set('activeTest', t);
 							Session.set('testNotStarted' , true);
+              _log('quiere hacer el test ' + t);
+              $('#clock').hide();
 						} else {
 							Session.set('activeTest', '');
 						}
@@ -279,19 +303,19 @@ if (Meteor.isClient) {
   });
 
   Tracker.autorun(function(){
-  	var t = Tests.find({}).fetch();
-	  for (var k in t){
-	  	for (var k2 in t[k].tests){
-	  		Session.set('nCounter_'+t[k].tests[k2].name, 0);
-	  		//console.log('nCounter_'+t[k].tests[k2].name);
-	  	}
-	  }
-
     var isActive = (Active.find({u:Meteor.userId(),t:Session.get('activeTest')}).fetch().length===1);
     // console.log("isActive:"+isActive + " - test:" + Session.get('activeTest') + " - test NotStarted:" + Session.get('testNotStarted') + " - activeTime:" + Session.get('activeTime'));
+      _log("!isActive: "+!isActive);
+      _log("activeTest: "+Session.get('activeTest')+"!==''");
+      _log("testNotStarted "+!Session.get('testNotStarted'));
+      _log("activeTime: "+Session.get('activeTime'));
+      _log("-----------------------------------------");
+
     if (!isActive && Session.get('activeTest')!=='' && !Session.get('testNotStarted') && Session.get('activeTime')) {
       //console.log("TIME OUT");
-      Meteor.call(
+      if ( !Session.get('textEndCalledNow') ) {
+        Session.set('textEndCalledNow', true);
+        Meteor.call(
             'testEnd',
             {t:Session.get('activeTest')},
             function(err, response) {
@@ -299,15 +323,24 @@ if (Meteor.isClient) {
               } else {
                 $('#clock').hide();
                 clockActive = false;
-                var text = '<h3 class="section-subheading text-muted">Lo sentimos. Finalizó el tiempo que tenias para realizar el test.</h3>';
+                var text = '';
+                if (!Session.get('activeTime')) {
+                  text = '<h3 class="section-subheading text-muted">Lo sentimos. Finalizó el tiempo que tenias para realizar el test.</h3>';
+                } else {
+                  text = response;
+                }
                 showMesg(text);
+                _resetCounters();
                 Session.set('activeTest', '');
+                Session.set('activeTime', false);
                 Session.set('testNotStarted', true);
+                Session.set('textEndCalledNow', false);
               }
             }
-         );
-      Session.set('activeTest', '');
-      Session.set('activeTime', false);
+        );
+      }
+      //Session.set('activeTest', '');
+      //Session.set('activeTime', false);
     }
 
   });

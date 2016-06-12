@@ -19,20 +19,21 @@ Meteor.publish("active", function () {
     return Active.find({});
 });
 
+var nQ = {};
 var timeId = {};
 var timeEndTest = {};
 var timeIniTest = {};
 var timeByQuestion = 45; //seconds
-var maxTime = {
-        "javascript1": 11*timeByQuestion,
-        "javascript2": 13*timeByQuestion,
-        "polymer": 4*timeByQuestion,
-        "friki": 6*timeByQuestion,
-        "Arquitecto": 35*timeByQuestion,
-        "Testing": 10*timeByQuestion
-      };
+var maxTime = {};
+var debugMode = true;
 
 Meteor.startup( function(){
+  var _log = function(msg) {
+    if ( debugMode ) {
+      console.log( msg );
+    }
+  };
+
   var getDiff = function( d2, d1 ) {
     var diff=d2-d1,sign=diff<0?-1:1,milliseconds,seconds,minutes,hours,days;
     diff/=sign; // or diff=Math.abs(diff);
@@ -60,19 +61,37 @@ Meteor.startup( function(){
     var timeToClock = args.timeToClock;
     timeId[user+test] = Meteor.setTimeout(function(){
       _updateTimeCounter(user,test);
-      console.log("Tiempo " + (timeEndTest[this.userId]-timeIniTest[this.userId]) + " segundos para el test superado");
+      _log("Tiempo " + (timeEndTest[this.userId]-timeIniTest[this.userId]) + " segundos para el test superado");
     }, timeToClock);
+  };
+
+  nQ['javascript1'] = Kuestions.find({"test":"javascript1"}).count();
+  nQ['javascript2'] = Kuestions.find({"test":"javascript2"}).count();
+  nQ['polymer'] = Kuestions.find({"test":"polymer"}).count();
+  nQ['friki'] = Kuestions.find({"test":"friki"}).count();
+  nQ['Arquitecto'] = Kuestions.find({"test":"Arquitecto"}).count();
+  nQ['Testing'] = Kuestions.find({"test":"Testing"}).count();
+  nQ['design'] = Kuestions.find({"test":"design"}).count();
+
+  maxTime = {
+    "javascript1": nQ['javascript1']*timeByQuestion,
+    "javascript2": nQ['javascript2']*timeByQuestion,
+    "polymer": nQ['polymer']*timeByQuestion,
+    "friki": nQ['friki']*timeByQuestion,
+    "Arquitecto": nQ['Arquitecto']*timeByQuestion,
+    "Testing": nQ['Testing']*timeByQuestion,
+    "design": nQ['design']*timeByQuestion
   };
 
   Answers.allow({
     'insert': function ( userId, doc) {
-      var answerExist = Answers.find( { "user":userId+doc.test, "answerID": doc.answerID } ).count();
-      //console.log( "¿Existe respuesta para user "+userId+" test: "+ doc.test+", answerID: "+ doc.answerID+"? " + answerExist );
-      //console.log( "Answers.find( { \"user\":\""+userId+doc.test+"\", \"answerID\": \""+doc.answerID+"\" } ).count() = " + answerExist );
-      //console.log( "Users:  " + userId + " == " + Meteor.userId() );
+      var answerExist = !!Answers.find( { "user":userId+doc.test, "answerID": doc.answerID } ).count();
+      _log( "¿Existe respuesta para user "+userId+" test: "+ doc.test+", answerID: "+ doc.answerID+"? " + answerExist );
+      _log( "Answers.find( { \"user\":\""+userId+doc.test+"\", \"answerID\": \""+doc.answerID+"\" } ).count() = " + answerExist );
+      _log( "Users:  " + userId + " == " + Meteor.userId() );
       //var resp = ( userId == Meteor.userId() )?( ( !answerExist )?"OK":"NEXT" ):false;
       var resp = ( userId == Meteor.userId() );
-      console.log( "RESP: " + resp );
+      _log( "RESULTADO INSERT RESPUESTA: " + resp );
       return resp; //( userId == Meteor.userId() );
     }
   });
@@ -91,17 +110,17 @@ Meteor.startup( function(){
         TimeCounter.insert({"user":user,"test":test,"timeIni":timeIniTest[this.userId],"timeEnd":0});
         Active.insert({"u":user,"t":test});
         timeToClock = maxTime[test]*1000;
-        //console.log("apunto el tiempo en el servidor para usuario " + user + " para el test " + test + ". Tiene maximo " + maxTime[test] + " segundos");
+        _log("apunto el tiempo en el servidor para usuario " + user + " para el test " + test + ". Tiene maximo " + maxTime[test] + " segundos");
       } else {
         // Indicarle que ya comenzó el test en algun momento y no lo terminó
         var tc = TimeCounter.find({"user":user,"test":test}).fetch();
-        //console.log( tc, tc[0], tc[0].timeIni );
+        _log( tc, tc[0], tc[0].timeIni );
         timeIniTest[this.userId] = new Date(tc[0].timeIni);
         var now = new Date();
         var timeVar = now.getTime() - timeIniTest[this.userId];
         timeToClock = maxTime[test]*1000 - timeVar;
-        console.log(timeToClock);
-        console.log("Test ya comenzado en algun momento y no lo terminó. Le quedan " + (timeToClock/1000) + " segundos" );
+        _log(timeToClock);
+        _log("Test ya comenzado en algun momento y no lo terminó. Le quedan " + (timeToClock/1000) + " segundos" );
       }
       timeEndTest[this.userId] = timeIniTest[this.userId].getTime() + timeToClock;
       timeoutStart({user:user,test:test,timeToClock:timeToClock});
@@ -116,9 +135,9 @@ Meteor.startup( function(){
     },
     testEnd: function(args){
       Meteor.clearTimeout(timeId[this.userId+args.t]);
-      //console.log("Clear Timeout " + timeId[this.userId+args.t]);
+      _log("Clear Timeout " + timeId[this.userId+args.t]);
       //clockActive = false;
-      console.log( "Terminó el usuario " + this.userId );
+      _log( "Terminó el usuario " + this.userId );
       timeEndTest[this.userId] = new Date();
       // Calc score
       var t = args.t,
@@ -126,7 +145,7 @@ Meteor.startup( function(){
           idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 ),
           objId = new Meteor.Collection.ObjectID(),
           result = 0;
-      console.log( "USER ID: " + this.userId + t );
+      _log( "USER ID: " + this.userId + t );
       // CALC RESULT
       for ( i=0; i<r.length; i++ ){
         var id = r[i].answerID,
@@ -134,19 +153,20 @@ Meteor.startup( function(){
         if (idType) { oid = id; } else { objId._str = id; oid = objId; }
         a = Kuestions.findOne({_id:oid}).answers;
         obj = _.find( a, function(obj) { return ( obj.text === r[i].answerTXT ); } );
-        console.log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
+        _log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
         result += parseInt( obj.value );
-        console.log( obj.value + " --> " + result );
+        _log( "Valor respuesta: " + obj.value + " --> RESULTADO TOTAL: " + result );
       }
       // Time
       timeToComplete = getDiff( timeEndTest[this.userId], timeIniTest[this.userId] );
-      console.log( "end: " + timeEndTest[this.userId] + ",ini: "+ timeIniTest[this.userId] );
-      console.log( "Time to complete test: " + timeToComplete );
+      _log( "end: " + timeEndTest[this.userId] + ",ini: "+ timeIniTest[this.userId] );
+      _log( "Time to complete test: " + timeToComplete );
       _updateTimeCounter(this.userId,args.t);
       // Guardamos en result
 
       // SAVE SCORE
       if ( !Results.find( { "user":this.userId+t } ).count() && t) {
+        _log( "ENTRA A GUARDAR RESULTADO...");
         var total = Kuestions.find({test:t}).count();
         Results.insert( { "user":this.userId+t,
                           "username":Meteor.user().services.github.username,
@@ -154,10 +174,10 @@ Meteor.startup( function(){
                           "score":result + " de " + total,
                           "time": timeToComplete,
                           "date": new Date() });
-        console.log( "Result: " + result + " de " + total + " para " + this.userId + " en el test " + t );
+        _log( "Result: " + result + " de " + total + " para " + this.userId + " en el test " + t );
         //GET EMAILS TO ALERT
         alertEmails = KTeam.find({$where: "this.alert_email==true"}).fetch();
-        console.log(alertEmails);
+        _log(alertEmails);
         // SAVE GLOBAL RANKING
         var username = Meteor.user().services.github.username;
         var res = Results.find({"username":username}).fetch();
@@ -176,10 +196,10 @@ Meteor.startup( function(){
             var test = el.user.substr(17);
             var s = el.score.split(" de ");
             var rN = resName[test];
-            console.log( "TEST: "+test+" rN:"+rN+" %:"+percents[test]);
+            _log( "TEST: "+test+" rN:"+rN+" %:"+percents[test]);
             rt[rN] += percents[test] * s[0] / s[1];
           }
-          console.log( "SAVING RANKING: js:"+rt.js.toFixed(2)+", qa:"+rt.qa.toFixed(2)+", tg:"+rt.tg.toFixed(2)+", hc:"+rt.hc.toFixed(2)+", fk:"+rt.fk.toFixed(2));
+          _log( "SAVING RANKING: js:"+rt.js.toFixed(2)+", qa:"+rt.qa.toFixed(2)+", tg:"+rt.tg.toFixed(2)+", hc:"+rt.hc.toFixed(2)+", fk:"+rt.fk.toFixed(2));
           Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2) });
         }
 
@@ -204,7 +224,7 @@ Meteor.startup( function(){
       if ( !Results.find( { "user":this.userId+t } ).count() ) {
         return "";
       } else {
-        console.log( "Test " + t + " ya realizado para el usuario " + this.userId );
+        _log( "Test " + t + " ya realizado para el usuario " + this.userId );
         return "<h3>Test ya realizado. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!</h3>";
       }
 
