@@ -53,6 +53,7 @@
                 <a class="navbar-brand page-scroll" href="#page-top"><img class="kairos" src="img/logos/kairos-digital-solutions.svg" alt="Kairos Digital Solutions" /></a>
             </div>
 
+            {{#if hasKCode}}
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="menu-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
@@ -66,9 +67,12 @@
                     {{else}}
                     <li><a class="page-scroll" href="#login">Login</a></li>
                     {{/if}}
-
+                
                 </ul>
             </div>
+            {{else}}
+                Error
+            {{/if}}
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
@@ -86,6 +90,7 @@
         </div>
     </header>
 
+     {{#if hasKCode}}
     <!-- LOGIN Section -->
     <a id="login"></a>
     <section id="test">
@@ -98,7 +103,8 @@
         {{> clock}}
         {{> theTest}}
     </section>
-
+    {{/if}}
+    
     <!-- About Section -->
     <section id="about">
         {{> about}}

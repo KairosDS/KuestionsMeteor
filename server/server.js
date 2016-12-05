@@ -2,6 +2,7 @@ Results = new Mongo.Collection("results");
 Ranking   = new Mongo.Collection("ranking");
 TimeCounter = new Mongo.Collection("timecounter");
 Active = new Meteor.Collection("active",{connection:null});
+Kcode = new Meteor.Collection("kcode");
 
 Meteor.publish("kuestions", function () {
   return Kuestions.find({},{fields:{"_id":1,"test":1,"question":1,"codeExample":1,"answers.text":1}});
@@ -18,6 +19,9 @@ Meteor.publish("tests", function () {
 Meteor.publish("active", function () {
     return Active.find({});
 });
+Meteor.publish("kcode", function(){
+  return Kcode.find({});
+})
 
 var nQ = {};
 var timeId = {};
@@ -201,8 +205,11 @@ Meteor.startup( function(){
           }
           _log( "SAVING RANKING: js:"+rt.js.toFixed(2)+", qa:"+rt.qa.toFixed(2)+", tg:"+rt.tg.toFixed(2)+", hc:"+rt.hc.toFixed(2)+", fk:"+rt.fk.toFixed(2));
           Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2) });
+          _log('upsert OK');  
         }
-
+        var code = Kcode.find({"user":Meteor.userId()}).fetch();
+        _log('code found ' + code[0]._id);
+        Kcode.remove(code[0]._id);
         return "<h3>Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!</h3>";
       } else {
         return "<h3>Este test ya lo realizaste y no es posible hacerlo mas de una vez. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!</h3>";
@@ -235,6 +242,17 @@ Meteor.startup( function(){
       // Recuperar las preguntas que contesto el usuario de Answers
       // Eliminar estas del array de testID
       return testID;
+    },
+    getKCode: function(arg){
+      var kcode = Kcode.find({$or:[{"code":arg.c, "user":""},{"code":arg.c, "volatile":false}]}).fetch();
+      if (kcode.length===1) {
+        if (kcode[0].volatile === true && arg.u === Meteor.userId()) {
+          Kcode.update({"code" : arg.c},{$set:{"user": arg.u}});
+          console.log("guardo " + arg.u + " en Kcode DB " + arg.c);
+        }
+        _log(kcode);
+      }
+      return (kcode.length>0);
     }
   });
 

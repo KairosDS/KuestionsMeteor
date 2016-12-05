@@ -58,10 +58,30 @@ if (Meteor.isClient) {
   var testID;
   var activeTest;
 
+  var getParam = function(param) {
+      var l = window.location.href.split('#')[0].split('?');
+      if (l.length > 1) {
+        var ps = l[1].split('&');
+        for (var i=0; i<ps.length; i++) {
+          var p = ps[i].split('=');
+          if (p[0]===param) {
+            return p[1];
+          }
+        }
+        return null;
+      }
+    }
+
   Meteor.subscribe('kuestions');
   Meteor.subscribe('kteam');
   Meteor.subscribe('tests');
   Meteor.subscribe('active');
+
+
+  var kcode = getParam('kcode');
+  Meteor.call('getKCode', {c: kcode}, function(err, response) {
+    Session.set('kcode', response);
+  });
 
   Template.team.helpers({
     jsTeam:function() {
@@ -265,6 +285,14 @@ if (Meteor.isClient) {
   Template.main.helpers({
     'consoleOpen':function(){
       return (Session.get('consoleOpen'))?'TRUE':'FALSE';
+    },
+    'hasKCode': function(){
+      if (Session.get('kcode')) {
+        return true;
+      } else {
+        Meteor.logout();
+        return false;
+      }
     }
   });
   Template.main.events({
@@ -303,6 +331,9 @@ if (Meteor.isClient) {
   });
 
   Tracker.autorun(function(){
+    if (Meteor.user()) {
+      Meteor.call('getKCode', {c:kcode, u:Meteor.userId()});
+    }
     var isActive = (Active.find({u:Meteor.userId(),t:Session.get('activeTest')}).fetch().length===1);
     // console.log("isActive:"+isActive + " - test:" + Session.get('activeTest') + " - test NotStarted:" + Session.get('testNotStarted') + " - activeTime:" + Session.get('activeTime'));
       _log("!isActive: "+!isActive);
@@ -315,10 +346,12 @@ if (Meteor.isClient) {
       //console.log("TIME OUT");
       if ( !Session.get('textEndCalledNow') ) {
         Session.set('textEndCalledNow', true);
+        _log('testEnd Called');
         Meteor.call(
             'testEnd',
             {t:Session.get('activeTest')},
             function(err, response) {
+              _log('testEnd has responsed');
               if (err) { console.log(err, response);
               } else {
                 $('#clock').hide();
