@@ -200,11 +200,12 @@ Meteor.startup( function(){
             var test = el.user.substr(17);
             var s = el.score.split(" de ");
             var rN = resName[test];
+            var now = new Date();
             _log( "TEST: "+test+" rN:"+rN+" %:"+percents[test]);
             rt[rN] += percents[test] * s[0] / s[1];
           }
           _log( "SAVING RANKING: js:"+rt.js.toFixed(2)+", qa:"+rt.qa.toFixed(2)+", tg:"+rt.tg.toFixed(2)+", hc:"+rt.hc.toFixed(2)+", fk:"+rt.fk.toFixed(2));
-          Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2) });
+          Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2), date: now });
           _log('upsert OK');  
         }
 
