@@ -51,7 +51,8 @@ Meteor.startup( function(){
     if ( minutes > 0 ) { aTime.push(minutes+" minutes"); }
     if ( seconds > 0 ) { aTime.push(seconds+" seconds"); }
     var timeString = aTime.join(", ");
-    var res = (sign===1?"Elapsed: ":"Remains: ")+timeString;
+    //var res = (sign===1?"Elapsed: ":"Remains: ")+timeString;
+    var res = timeString;
     console.info(res);
     return res;
   };
@@ -144,11 +145,12 @@ Meteor.startup( function(){
       _log( "Terminó el usuario " + this.userId );
       timeEndTest[this.userId] = new Date();
       // Calc score
-      var t = args.t,
-          r = Answers.find({"user":this.userId+t}).fetch(),
-          idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 ),
-          objId = new Meteor.Collection.ObjectID(),
-          result = 0;
+      var t = args.t;
+      var r = Answers.find({"user":this.userId+t}).fetch();
+      var idType = ( Kuestions.find( { _id: { $type: 2 } } ).count() > 0 );
+      var objId = new Meteor.Collection.ObjectID();
+      var result = 0;
+      var talento = args.ta;
       _log( "USER ID: " + this.userId + t );
       // CALC RESULT
       for ( i=0; i<r.length; i++ ){
@@ -177,7 +179,9 @@ Meteor.startup( function(){
                           "email":Meteor.user().services.github.email,
                           "score":result + " de " + total,
                           "time": timeToComplete,
-                          "date": new Date() });
+                          "date": new Date(),
+                          "talento": talento 
+                        });
         _log( "Result: " + result + " de " + total + " para " + this.userId + " en el test " + t );
         //GET EMAILS TO ALERT
         alertEmails = KTeam.find({$where: "this.alert_email==true"}).fetch();
@@ -248,15 +252,18 @@ Meteor.startup( function(){
       return testID;
     },
     getKCode: function(arg){
+      var code = '';
+      var talento = '';
       var kcode = Kcode.find({$or:[{"code":arg.c, "user":""},{"code":arg.c, "volatile":false}]}).fetch();
       if (kcode.length===1) {
+        code = kcode[0].code;
+        talento = kcode[0].talento;
         if (kcode[0].volatile === true && arg.u === Meteor.userId()) {
           Kcode.update({"code" : arg.c},{$set:{"user": arg.u}});
           console.log("guardo " + arg.u + " en Kcode DB " + arg.c);
         }
-        _log(kcode);
       }
-      return (kcode.length>0);
+      return { code: code, talento: talento};
     },
     preLogout: function() {
       var u = Meteor.userId;

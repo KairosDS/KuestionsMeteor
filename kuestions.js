@@ -34,6 +34,7 @@ if (Meteor.isClient) {
   Session.set('consoleOpen', false);
   Session.set('activeTime', false);
   Session.set('textEndCalledNow', false);
+  Session.set('talento', '');
 
 
   Meteor.call('getQT',{},function(err, response) {
@@ -80,7 +81,8 @@ if (Meteor.isClient) {
 
   var kcode = getParam('kcode');
   Meteor.call('getKCode', {c: kcode}, function(err, response) {
-    Session.set('kcode', response);
+    Session.set('kcode', response.code);
+    Session.set('talento', response.talento);
   });
 
   Template.team.helpers({
@@ -116,7 +118,7 @@ if (Meteor.isClient) {
           Session.set('textEndCalledNow', true);
         	Meteor.call(
         		'testEnd',
-        		{t:Session.get('activeTest')},
+        		{t:Session.get('activeTest'), ta: Session.get('talento')},
           	function(err, response) {
           		if (err) { console.log(err, response);
           		} else {
@@ -335,7 +337,7 @@ if (Meteor.isClient) {
   });
 
   Tracker.autorun(function(){
-    if (Meteor.user() && Session.get('kcode') === '') {
+    if (Meteor.user()) {
       Meteor.call('getKCode', {c:kcode, u:Meteor.userId()});
     }
     var isActive = (Active.find({u:Meteor.userId(),t:Session.get('activeTest')}).fetch().length===1);
