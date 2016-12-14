@@ -207,9 +207,12 @@ Meteor.startup( function(){
           Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2) });
           _log('upsert OK');  
         }
-        var code = Kcode.find({"user":Meteor.userId()}).fetch();
-        _log('code found ' + code[0]._id);
-        Kcode.remove(code[0]._id);
+
+        var code = Kcode.find({"user":Meteor.userId(), volatile: true}).fetch();
+        if (code.length) {
+          _log('code found ' + code[0]._id);
+          Kcode.remove(code[0]._id);
+        }
         return "<h3>Test finalizado correctamente. Nos pondremos en contacto contigo si superaste el test. Muchas gracias!</h3>";
       } else {
         return "<h3>Este test ya lo realizaste y no es posible hacerlo mas de una vez. Si lo superaste nos pondremos en contacto contigo. Muchas gracias!</h3>";
@@ -253,6 +256,11 @@ Meteor.startup( function(){
         _log(kcode);
       }
       return (kcode.length>0);
+    },
+    preLogout: function() {
+      var u = Meteor.userId;
+      Kcode.remove({user:u});
+      return true;
     }
   });
 

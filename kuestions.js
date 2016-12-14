@@ -112,6 +112,7 @@ if (Meteor.isClient) {
         if (q) {
       			return q.question;
         } else {
+          _log('question ', q, 'testEnd called');
           Session.set('textEndCalledNow', true);
         	Meteor.call(
         		'testEnd',
@@ -297,7 +298,10 @@ if (Meteor.isClient) {
   });
   Template.main.events({
     'click .logout': function() {
-      Meteor.logout();
+      Meteor.call('preLogout',{}, function() {
+        Meteor.logout();
+        Session.set('kcode', '');
+      });
     }
   });
 
@@ -331,7 +335,7 @@ if (Meteor.isClient) {
   });
 
   Tracker.autorun(function(){
-    if (Meteor.user()) {
+    if (Meteor.user() && Session.get('kcode') === '') {
       Meteor.call('getKCode', {c:kcode, u:Meteor.userId()});
     }
     var isActive = (Active.find({u:Meteor.userId(),t:Session.get('activeTest')}).fetch().length===1);

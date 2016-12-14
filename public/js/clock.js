@@ -127,9 +127,10 @@ function renderDigit(container, number) {
 
 function render() {
   if ( clockActive ) {
-    var now = new Date(),
-      diff = String(gradclock.getTime() - now.getTime()),
-      len = diff.length;
+    var now = new Date();
+    var diff = String(gradclock.getTime() - now.getTime());
+    var len = diff.length;
+    //console.log(Number(diff.charAt(len-7)), Number(diff.charAt(len-6)), Number(diff.charAt(len-5)), Number(diff.charAt(len-4)), Number(diff.charAt(len-3)));
     renderDigit(digit2, Number(diff.charAt(len-3)));
     renderDigit(digit3, Number(diff.charAt(len-4)));
     renderDigit(digit4, Number(diff.charAt(len-5)));
