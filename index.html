@@ -430,6 +430,7 @@
 </template>
 
 <template name="clock">
+    {{ #if activeTest }}
     <div class="row text-center clock" id="clock">
         <div id="digit-6" class="digit second">
             <div class="cell"></div>
@@ -582,4 +583,5 @@
             <div class="cell"></div>
         </div>
     </div>
+    {{/ if}}
 </template>

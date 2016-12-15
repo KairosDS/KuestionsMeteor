@@ -81,8 +81,10 @@ if (Meteor.isClient) {
 
   var kcode = getParam('kcode');
   Meteor.call('getKCode', {c: kcode}, function(err, response) {
-    Session.set('kcode', response.code);
-    Session.set('talento', response.talento);
+    if (response) {
+      Session.set('kcode', response.code);
+      Session.set('talento', response.talento);
+    }
   });
 
   Template.team.helpers({
@@ -94,6 +96,12 @@ if (Meteor.isClient) {
   	withTwitter:function(){
     	return (this.twitter!="@");
     }
+  });
+  
+  Template.clock.helpers({
+    activeTest: function() {
+  		return Session.get('activeTest');
+  	}
   });
 
   Template.theTest.helpers({
@@ -241,6 +249,11 @@ if (Meteor.isClient) {
             var now = new Date();
             gradclock = new Date(now.getTime() + response);
             clockActive = true;
+            digit2 = $('#digit-2');
+            digit3 = $('#digit-3');
+            digit4 = $('#digit-4');
+            digit5 = $('#digit-5');
+            digit6 = $('#digit-6');
             requestAnimationFrame(render);
             //console.log("Mostramos el reloj en cuenta a atrás");
           }
@@ -338,7 +351,7 @@ if (Meteor.isClient) {
 
   Tracker.autorun(function(){
     if (Meteor.user()) {
-      Meteor.call('getKCode', {c:kcode, u:Meteor.userId()});
+      Meteor.call('setUserKcode', {c:kcode, u:Meteor.userId()});
     }
     var isActive = (Active.find({u:Meteor.userId(),t:Session.get('activeTest')}).fetch().length===1);
     // console.log("isActive:"+isActive + " - test:" + Session.get('activeTest') + " - test NotStarted:" + Session.get('testNotStarted') + " - activeTime:" + Session.get('activeTime'));

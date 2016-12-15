@@ -1,8 +1,8 @@
-var digit2 = $('#digit-2'),
-    digit3 = $('#digit-3'),
-    digit4 = $('#digit-4'),
-    digit5 = $('#digit-5'),
-    digit6 = $('#digit-6');
+var digit2 = $('#digit-2');
+var digit3 = $('#digit-3');
+var digit4 = $('#digit-4');
+var digit5 = $('#digit-5');
+var digit6 = $('#digit-6');
 
 function renderDigit(container, number) {
   var matrix;

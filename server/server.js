@@ -257,13 +257,24 @@ Meteor.startup( function(){
       var kcode = Kcode.find({$or:[{"code":arg.c, "user":""},{"code":arg.c, "volatile":false}]}).fetch();
       if (kcode.length===1) {
         code = kcode[0].code;
+        talento = (kcode[0].talento==='') ? kcode[0].code : kcode[0].talento;
+      }
+      return {code: code, talento: talento};
+    },
+    setUserKcode: function(arg){
+      var code = '';
+      var talento = '';
+      var kcode = Kcode.find({$or:[{"code":arg.c, "user":""}]}).fetch();
+      if (kcode.length===1) {
+        code = kcode[0].code;
         talento = kcode[0].talento;
         if (kcode[0].volatile === true && arg.u === Meteor.userId()) {
           Kcode.update({"code" : arg.c},{$set:{"user": arg.u}});
           console.log("guardo " + arg.u + " en Kcode DB " + arg.c);
+          return true;
         }
       }
-      return { code: code, talento: talento};
+      return false;
     },
     preLogout: function() {
       var u = Meteor.userId;
