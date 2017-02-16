@@ -70,6 +70,7 @@ Meteor.startup( function(){
     }, timeToClock);
   };
 
+  nQ['java1'] = Kuestions.find({"test":"java1"}).count();
   nQ['javascript1'] = Kuestions.find({"test":"javascript1"}).count();
   nQ['javascript2'] = Kuestions.find({"test":"javascript2"}).count();
   nQ['polymer'] = Kuestions.find({"test":"polymer"}).count();
@@ -79,6 +80,7 @@ Meteor.startup( function(){
   nQ['design'] = Kuestions.find({"test":"design"}).count();
 
   maxTime = {
+    "java1": nQ['java1']*60,
     "javascript1": nQ['javascript1']*timeByQuestion,
     "javascript2": nQ['javascript2']*timeByQuestion,
     "polymer": nQ['polymer']*timeByQuestion,
@@ -191,14 +193,15 @@ Meteor.startup( function(){
         var res = Results.find({"username":username}).fetch();
         if ( res.length > 0 ) {
           var percents = {
+            "java1": 100,
             "javascript1":35, "javascript2":60, "polymer":5,
             "Arquitecto":100,
             "Testing":100,
             "design":100,
             "friki":100
           };
-          var resName = { "javascript1":"js", "javascript2":"js", "polymer":"js", "Arquitecto":"qa", "Testing":"tg", "design":"hc", "friki":"fk" };
-          var rt = { "js":0, "qa":0, "tg":0, "hc":0, "fk":0 };
+          var resName = { "java1":"java", "javascript1":"js", "javascript2":"js", "polymer":"js", "Arquitecto":"qa", "Testing":"tg", "design":"hc", "friki":"fk" };
+          var rt = { "java":0, "js":0, "qa":0, "tg":0, "hc":0, "fk":0 };
           for( i=0; i<res.length; i++){
             var el = res[i];
             var test = el.user.substr(17);
@@ -208,8 +211,8 @@ Meteor.startup( function(){
             _log( "TEST: "+test+" rN:"+rN+" %:"+percents[test]);
             rt[rN] += percents[test] * s[0] / s[1];
           }
-          _log( "SAVING RANKING: js:"+rt.js.toFixed(2)+", qa:"+rt.qa.toFixed(2)+", tg:"+rt.tg.toFixed(2)+", hc:"+rt.hc.toFixed(2)+", fk:"+rt.fk.toFixed(2));
-          Ranking.upsert({username:username},{username:username,result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2), date: now });
+          _log( "SAVING RANKING: java:" + rt.java.toFixed(2) + ", js:"+rt.js.toFixed(2)+", qa:"+rt.qa.toFixed(2)+", tg:"+rt.tg.toFixed(2)+", hc:"+rt.hc.toFixed(2)+", fk:"+rt.fk.toFixed(2));
+          Ranking.upsert({username:username},{username:username,result_java:rt.java.toFixed(2), result_js:rt.js.toFixed(2), result_qa:rt.qa.toFixed(2), result_tg:rt.tg.toFixed(2), result_hc:rt.hc.toFixed(2), result_fk:rt.fk.toFixed(2), date: now });
           _log('upsert OK');  
         }
 
