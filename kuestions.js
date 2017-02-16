@@ -178,7 +178,13 @@ if (Meteor.isClient) {
 			return Session.get('messageTest');
 		},
 		'testList': function(){
-			return Tests.find({}).fetch();
+			var testList = Tests.find({}).fetch();
+      var testGroups = [];
+      var size = 3;
+      while (testList.length > 0) {
+        testGroups.push(testList.splice(0, size));
+      }
+      return testGroups;
 		}
 	});
 

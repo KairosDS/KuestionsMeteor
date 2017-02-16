@@ -136,9 +136,10 @@
             	</div>
             </div>
 
-        	<div class="row text-center">
         	{{# each testList}}
-				<div class="col-md-4 k-test__section">
+            <div class="row text-center">
+                {{#each this}}
+				<div class="col-xs-12 col-sm-4 col-md-4 k-test__section">
                     <img src="{{img}}" alt="Test {{type}}">
                     <h3 class="service-heading">{{type}}</h3>
                     <p class="text-muted">{{description}}</p>
@@ -148,8 +149,9 @@
 		                {{/each}}
 		            </ul>
                 </div>
-            {{/each}}
+                {{/each}}
            	</div>
+            {{/each}}
  		{{else}}
             <div class="row">
                 <div class="col-md-8 col-md-offset-2 text-center">
