@@ -159,7 +159,9 @@ Meteor.startup( function(){
         var id = r[i].answerID,
             oid , a;
         if (idType) { oid = id; } else { objId._str = id; oid = objId; }
-        a = Kuestions.findOne({_id:oid}).answers;
+        var Ooid = new Meteor.Collection.ObjectID(oid);
+        var ku = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
+        var a = ku.answers;
         obj = _.find( a, function(obj) { return ( obj.text === r[i].answerTXT ); } );
         _log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
         result += parseInt( obj.value );
@@ -252,6 +254,7 @@ Meteor.startup( function(){
           testID = args.testID;
       // Recuperar las preguntas que contesto el usuario de Answers
       // Eliminar estas del array de testID
+      //console.log("testID: " + testID);
       return testID;
     },
     getKCode: function(arg){

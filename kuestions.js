@@ -115,10 +115,15 @@ if (Meteor.isClient) {
   		return Session.get('testNotStarted');
   	},
     nextQuestion: function(){
+      //console.log('Next Question');
       if (Session.get('testID').length && !Session.get('testNotStarted')) {
-        var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] }),
-        		q = Kuestions.findOne({_id:oid});
-        		//console.log(oid, Session.get('nCounter_'+Session.get('activeTest')), Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))]);
+        var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] });
+        var Ooid = new Meteor.Collection.ObjectID(oid);
+        var q = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
+        
+        //console.log(oid);
+        //console.log('q: ' + q);
+        //console.log(oid, Session.get('nCounter_'+Session.get('activeTest')), Session.get('nCounter_'+Session.get('activeTest')), Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))]);
         if (q) {
       			return q.question;
         } else {
@@ -148,8 +153,9 @@ if (Meteor.isClient) {
     },
     nextCodeExample: function(){
       if (Session.get('testID').length && !Session.get('testNotStarted')) {
-        var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] }),
-        		c = Kuestions.findOne({_id:oid});
+        var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] });
+        var Ooid = new Meteor.Collection.ObjectID(oid);
+        var c = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
         if (c) {
           return "<pre style='border:0'><code>" + c.codeExample.replace("{","{<br>").replace("}","}<br>").replace(";",";<br>") + "</code></pre>";
         } else {
@@ -161,8 +167,9 @@ if (Meteor.isClient) {
     },
     answers: function(){
       if (Session.get('testID').length && !Session.get('testNotStarted')) {
-        var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] }),
-        		a = Kuestions.findOne({_id:oid});
+        var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] });
+        var Ooid = new Meteor.Collection.ObjectID(oid);
+        var a = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
         if (a) {
           return a.answers.sort(function() {return Math.random() - 0.5;});
         } else {
@@ -261,7 +268,7 @@ if (Meteor.isClient) {
             digit5 = $('#digit-5');
             digit6 = $('#digit-6');
             requestAnimationFrame(render);
-            //console.log("Mostramos el reloj en cuenta a atrás");
+            console.log("Mostramos el reloj en cuenta a atrás");
           }
         }
       );
@@ -269,9 +276,13 @@ if (Meteor.isClient) {
         'getQuestionsAnswered',
         {ansusid:ansusid, testID:testID},
         function(err, response) {
+          console.log(response);
           if (err) { console.log(err, response);
+            console.log("ERROR");
+            console.log(err);
           } else {
             Session.set('testID', response); //.sort(function() {return Math.random() - 0.5;}));
+            //console.log(Session.get('testID'));
             showMesg( '');
           }
         }
