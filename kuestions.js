@@ -118,10 +118,10 @@ if (Meteor.isClient) {
       //console.log('Next Question');
       if (Session.get('testID').length && !Session.get('testNotStarted')) {
         var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] });
-        var Ooid = new Meteor.Collection.ObjectID(oid);
-        var q = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
-        
-        //console.log(oid);
+        //console.log("oid " + oid);
+        var Ooid = (typeof oid !== "object") ? new Meteor.Collection.ObjectID(oid) : oid;
+        //console.log("Ooid ", Ooid);
+        var q = Kuestions.findOne({$or: [{_id: oid}, {_id: Ooid}]});
         //console.log('q: ' + q);
         //console.log(oid, Session.get('nCounter_'+Session.get('activeTest')), Session.get('nCounter_'+Session.get('activeTest')), Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))]);
         if (q) {
@@ -154,7 +154,7 @@ if (Meteor.isClient) {
     nextCodeExample: function(){
       if (Session.get('testID').length && !Session.get('testNotStarted')) {
         var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] });
-        var Ooid = new Meteor.Collection.ObjectID(oid);
+        var Ooid = (typeof oid !== "object") ? new Meteor.Collection.ObjectID(oid) : oid;
         var c = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
         if (c) {
           return "<pre style='border:0'><code>" + c.codeExample.replace("{","{<br>").replace("}","}<br>").replace(";",";<br>") + "</code></pre>";
@@ -168,7 +168,7 @@ if (Meteor.isClient) {
     answers: function(){
       if (Session.get('testID').length && !Session.get('testNotStarted')) {
         var oid = getId({ id:Session.get('testID')[Session.get('nCounter_'+Session.get('activeTest'))] });
-        var Ooid = new Meteor.Collection.ObjectID(oid);
+        var Ooid = (typeof oid !== "object") ? new Meteor.Collection.ObjectID(oid) : oid;
         var a = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
         if (a) {
           return a.answers.sort(function() {return Math.random() - 0.5;});
