@@ -35,7 +35,7 @@ if (Meteor.isClient) {
   Session.set('activeTime', false);
   Session.set('textEndCalledNow', false);
   Session.set('talento', '');
-
+  Session.set('lang', 'en'); //navigator.language || navigator.userLanguage);
 
   Meteor.call('getQT',{},function(err, response) {
               if (err) { console.log(err, response);
@@ -185,7 +185,8 @@ if (Meteor.isClient) {
 			return Session.get('messageTest');
 		},
 		'testList': function(){
-			var testList = Tests.find({}).fetch();
+      console.log(Session.get("lang"));
+			var testList = Tests.find({lang:Session.get("lang")}).fetch();
       var testGroups = [];
       var size = 3;
       while (testList.length > 0) {
