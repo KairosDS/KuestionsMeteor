@@ -1,9 +1,3 @@
-Results = new Mongo.Collection("results");
-Ranking   = new Mongo.Collection("ranking");
-TimeCounter = new Mongo.Collection("timecounter");
-Active = new Meteor.Collection("active",{connection:null});
-Kcode = new Meteor.Collection("kcode");
-
 Meteor.publish("kuestions", function () {
   return Kuestions.find({},{fields:{"_id":1,"test":1,"question":1,"codeExample":1,"answers.text":1}});
 });
@@ -15,6 +9,9 @@ Meteor.publish("kteam", function () {
 });
 Meteor.publish("tests", function () {
   return Tests.find({});
+});
+Meteor.publish("testsgroup", function () {
+  return TestsGroup.find({});
 });
 Meteor.publish("active", function () {
     return Active.find({});
