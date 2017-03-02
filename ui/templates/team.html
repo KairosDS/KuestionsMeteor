@@ -1,0 +1,20 @@
+<template name="team">
+	<div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading">Nuestro increible equipo</h2>
+                <h3 class="section-subheading text-muted">Está compuesto por</h3>
+            </div>
+        </div>
+        <div class="row">
+            {{#each jsTeam}}
+            	{{> teamMember}}
+            {{/each}}
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <p class="large text-muted">¡Este es el Kairós Team!</p>
+            </div>
+        </div>
+    </div>
+</template>

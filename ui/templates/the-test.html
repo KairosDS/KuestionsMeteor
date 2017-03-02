@@ -1,0 +1,44 @@
+<template name="theTest">
+    {{ #if activeTest }}
+	<div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <span style="display:none">{{tot}}</span>
+                <h2 class="section-heading"> {{activeTest}} Test</h2>
+				{{ #if testNotStarted }}
+                <h3 class="section-subheading text-muted">Recuerda que cuando hagas click en el boton 'start' debes completar el test o no puntuará.</h3>
+                <h4>Que la fuerza te acompañe!</h4>
+                {{/if}}
+                <h3 id='clock'></h3>
+            </div>
+        </div>
+        {{ #if testNotStarted }}
+        <div id="start_clock" class="row text-center">
+        	<button type="button" class="btn btn-xl btn-warning start-test"><span class="glyphicon glyphicon-play"></span> Start</button>
+        </div>
+        {{/if}}
+        <div class="row text-center">
+        	<div class="col-md-12 col-sm-6 messageText">{{{messageTest}}}</div>
+            <div class="col-md-6 col-sm-6 test-question">
+				<div>{{nextQuestion}}</div>
+				{{{nextCodeExample}}}
+            </div>
+            <div class="col-md-6 col-sm-6 test-options text-left">
+                <ul class="questions-list">
+            	{{#each answers}}
+            		<li>
+                        <label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> <span class="answer_text">{{this.text}}</span></label>
+                    </li>
+            	{{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12 col-sm-6 messageText">{{{messageTest}}}</div>
+        </div>
+    </div>
+    {{/if}}
+</template>

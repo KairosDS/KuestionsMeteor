@@ -1,0 +1,86 @@
+<template name="main">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container ">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top"><img class="kairos" src="img/logos/kairos-digital-solutions.svg" alt="Kairos Digital Solutions" /></a>
+            </div>
+
+            {{#if hasKCode}}
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="menu-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden"><a href="#page-top"></a></li>
+                    <li><a class="page-scroll" href="#test">Tests</a></li>
+                    <li><a class="page-scroll" href="#about">Acerca de</a></li>
+                    <li><a class="page-scroll" href="#team">El equipo</a></li>
+                    <!--<li><a class="page-scroll" href="#contact">Contactanos</a></li>-->
+                    {{#if currentUser}}
+                    <li class="user" id="user"><i class="fa fa-github"></i> {{currentUser.profile.name}} <a href="#" class="logout">(Salir)</a></li>
+                    {{else}}
+                    <li><a class="page-scroll" href="#login">Login</a></li>
+                    {{/if}}
+                
+                </ul>
+            </div>
+            {{else}}
+                Error
+            {{/if}}
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="intro-text">
+                <div class="intro-lead-in">¡Bienvenido a Kuestions!</div>
+                <div class="intro-heading">Encantados de conocerte</div>
+                <div class="intro-heading">¿Quieres trabajar con nosotros?</div>
+                <a href="#login" class="page-scroll btn btn-xl">¿Te contamos más?</a>
+            </div>
+        </div>
+    </header>
+
+     {{#if hasKCode}}
+    <!-- LOGIN Section -->
+    <a id="login"></a>
+    <section id="test">
+        {{> loginSection}}
+    </section>
+
+    <!-- TESTS Grid Section -->
+    <section id="the-test" class="bg-light-gray">
+        <!--<h1>{{consoleOpen}}</h1>-->
+        {{> clock}}
+        {{> theTest}}
+    </section>
+    {{/if}}
+    
+    <!-- About Section -->
+    <section id="about">
+        {{> about}}
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="bg-light-gray">
+        {{> team}}
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        {{contact}}
+    </section>
+
+    <footer>
+        {{> footer}}
+    </footer>
+</template>

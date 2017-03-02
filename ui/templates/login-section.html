@@ -1,0 +1,39 @@
+<template name="loginSection">
+	<div class="container">
+		{{#if currentUser}}
+            <div class="row text-center k-test">
+            	<div class="col-md-8 col-md-offset-2">
+            		<h2 class="section-heading">El proceso de test</h2>
+            		<p class="lead">Si quieres trabajar con nosotros necesitamos que completes al menos uno de los test relacionados con tu perfil.</p>
+            		<p class="lead">Tenemos tests de javascript, polymer, programacion, testing, agile...</p>
+            	</div>
+            </div>
+
+        	{{# each testList}}
+            <div class="row text-center">
+                {{#each this}}
+				<div class="col-xs-12 col-sm-4 col-md-4 k-test__section">
+                    <img src="{{img}}" alt="Test {{type}}">
+                    <h3 class="service-heading">{{type}}</h3>
+                    <p class="text-muted">{{description}}</p>
+                    <ul class="list-group">
+			            {{# each tests}}
+			            	<li class="list-group-item"><a href="#the-test" class="test" data-test="{{name}}">{{title}}</a></li>
+		                {{/each}}
+		            </ul>
+                </div>
+                {{/each}}
+           	</div>
+            {{/each}}
+ 		{{else}}
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 text-center">
+                    <h2 class="section-heading">Login</h2>
+                    <p class="lead">Primero, tienes que logarte con tu cuenta de github. ¿No tienes? No importa, ábrete una y participa en nuestros test.</p>
+                    {{> loginButtons}}
+                    <div style="margin-top:100px"></div>
+                </div>
+            </div>
+        {{/if}}
+    </div>
+</template>
