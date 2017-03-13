@@ -5,3 +5,4 @@ deploy/
 private
 scripts
 jsonData
+.vscode
