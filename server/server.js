@@ -10,9 +10,6 @@ Meteor.publish("kteam", function () {
 Meteor.publish("tests", function () {
   return Tests.find({});
 });
-Meteor.publish("testsgroup", function () {
-  return TestsGroup.find({});
-});
 Meteor.publish("active", function () {
     return Active.find({});
 });
@@ -156,9 +153,7 @@ Meteor.startup( function(){
         var id = r[i].answerID,
             oid , a;
         if (idType) { oid = id; } else { objId._str = id; oid = objId; }
-        var Ooid = new Meteor.Collection.ObjectID(oid);
-        var ku = Kuestions.findOne({$or: [{_id: oid},{_id: Ooid}]});
-        var a = ku.answers;
+        a = Kuestions.findOne({_id:oid}).answers;
         obj = _.find( a, function(obj) { return ( obj.text === r[i].answerTXT ); } );
         _log( "id:" + oid + " a:" + a + "   |  "+obj.text + " === " + r[i].answerTXT );
         result += parseInt( obj.value );
@@ -251,7 +246,6 @@ Meteor.startup( function(){
           testID = args.testID;
       // Recuperar las preguntas que contesto el usuario de Answers
       // Eliminar estas del array de testID
-      //console.log("testID: " + testID);
       return testID;
     },
     getKCode: function(arg){

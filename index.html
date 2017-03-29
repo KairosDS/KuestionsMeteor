@@ -37,3 +37,553 @@
     <script src="js/agency.js"></script>
     <script src="js/clock.js"></script>
 </body>
+
+<template name="main">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container ">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top"><img class="kairos" src="img/logos/kairos-digital-solutions.svg" alt="Kairos Digital Solutions" /></a>
+            </div>
+
+            {{#if hasKCode}}
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="menu-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden"><a href="#page-top"></a></li>
+                    <li><a class="page-scroll" href="#test">Tests</a></li>
+                    <li><a class="page-scroll" href="#about">Acerca de</a></li>
+                    <li><a class="page-scroll" href="#team">El equipo</a></li>
+                    <!--<li><a class="page-scroll" href="#contact">Contactanos</a></li>-->
+                    {{#if currentUser}}
+                    <li class="user" id="user"><i class="fa fa-github"></i> {{currentUser.profile.name}} <a href="#" class="logout">(Salir)</a></li>
+                    {{else}}
+                    <li><a class="page-scroll" href="#login">Login</a></li>
+                    {{/if}}
+                
+                </ul>
+            </div>
+            {{else}}
+                Error
+            {{/if}}
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="intro-text">
+                <div class="intro-lead-in">¡Bienvenido a Kuestions!</div>
+                <div class="intro-heading">Encantados de conocerte</div>
+                <div class="intro-heading">¿Quieres trabajar con nosotros?</div>
+                <a href="#login" class="page-scroll btn btn-xl">¿Te contamos más?</a>
+            </div>
+        </div>
+    </header>
+
+     {{#if hasKCode}}
+    <!-- LOGIN Section -->
+    <a id="login"></a>
+    <section id="test">
+        {{> loginSection}}
+    </section>
+
+    <!-- TESTS Grid Section -->
+    <section id="the-test" class="bg-light-gray">
+        <!--<h1>{{consoleOpen}}</h1>-->
+        {{> clock}}
+        {{> theTest}}
+    </section>
+    {{/if}}
+    
+    <!-- About Section -->
+    <section id="about">
+        {{> about}}
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="bg-light-gray">
+        {{> team}}
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        {{contact}}
+    </section>
+
+    <footer>
+        {{> footer}}
+    </footer>
+</template>
+
+<template name="loginSection">
+	<div class="container">
+		{{#if currentUser}}
+            <div class="row text-center k-test">
+            	<div class="col-md-8 col-md-offset-2">
+            		<h2 class="section-heading">El proceso de test</h2>
+            		<p class="lead">Si quieres trabajar con nosotros necesitamos que completes al menos uno de los test relacionados con tu perfil.</p>
+            		<p class="lead">Tenemos tests de javascript, polymer, programacion, testing, agile...</p>
+            	</div>
+            </div>
+
+        	{{# each testList}}
+            <div class="row text-center">
+                {{#each this}}
+				<div class="col-xs-12 col-sm-4 col-md-4 k-test__section">
+                    <img src="{{img}}" alt="Test {{type}}">
+                    <h3 class="service-heading">{{type}}</h3>
+                    <p class="text-muted">{{description}}</p>
+                    <ul class="list-group">
+			            {{# each tests}}
+			            	<li class="list-group-item"><a href="#the-test" class="test" data-test="{{name}}">{{title}}</a></li>
+		                {{/each}}
+		            </ul>
+                </div>
+                {{/each}}
+           	</div>
+            {{/each}}
+ 		{{else}}
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 text-center">
+                    <h2 class="section-heading">Login</h2>
+                    <p class="lead">Primero, tienes que logarte con tu cuenta de github. ¿No tienes? No importa, ábrete una y participa en nuestros test.</p>
+                    {{> loginButtons}}
+                    <div style="margin-top:100px"></div>
+                </div>
+            </div>
+        {{/if}}
+    </div>
+</template>
+
+<template name="team">
+	<div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading">Nuestro increible equipo</h2>
+                <h3 class="section-subheading text-muted">Está compuesto por</h3>
+            </div>
+        </div>
+        <div class="row">
+            {{#each jsTeam}}
+            	{{> teamMember}}
+            {{/each}}
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <p class="large text-muted">¡Este es el Kairós Team!</p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="teamMember">
+	<div class="col-sm-4">
+        <div class="team-member">
+            <img src="{{image}}" class="img-responsive img-circle" alt="">
+            <h4>{{name}}</h4>
+            <p class="text-muted">{{description}}</p>
+           	{{# if withTwitter }}
+            <ul class="list-inline social-buttons">
+                <li><a href="{{twitter_link}}"><i class="fa fa-twitter"></i></a></li>
+            </ul>
+            <a href="{{twitter_link}}">{{twitter}}</a>
+            {{/if}}
+        </div>
+    </div>
+</template>
+
+<template name="contact">
+	<div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading">Contact Us</h2>
+                <h3 class="section-subheading text-muted">If you have a trouble with the test, please contact with us</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                {{> contactForm }}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="contactForm">
+	<form name="sentMessage" id="contactForm" novalidate>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Your Name *" id="name" required data-validation-required-message="Please enter your name." value="{{currentUser.profile.name}}">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Your Email *" id="email" required data-validation-required-message="Please enter your email address." value="{{currentUser.profile.user}}">
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <input type="tel" class="form-control" placeholder="Your Phone" id="phone">
+                    <p class="help-block text-danger"></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="Your Message *" id="message" required data-validation-required-message="Please enter a message."></textarea>
+                    <p class="help-block text-danger"></p>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-lg-12 text-center">
+                <div id="success"></div>
+                <button type="submit" class="btn btn-xl">Send Message</button>
+            </div>
+        </div>
+    </form>
+</template>
+
+<template name="footer">
+	<div class="container footer">
+        <div class="row">
+            <div class="col-md-4">
+                <span class="copyright">Copyright &copy; Kairós Digital Solution S.L. 2015</span>
+            </div>
+            <div class="col-md-8">
+                <ul class="list-inline social-buttons">
+                    <!-- <li><a href="http://twitter.com/kairosds"><i class="fa fa-twitter"></i>@kairosds</a></li> -->
+                    <li><a href="http://www.kairosds.com"><i class="fa fa-link"></i></a></li>
+                    <!--<li><a href="#"><i class="fa fa-linkedin"></i></a>
+                    </li>-->
+                </ul>
+            </div>
+            <!-- <div class="col-md-4">
+                <ul class="list-inline quicklinks">
+                    <li><a href="#privacy_policy">Privacy Policy</a>
+                    </li>
+                    <li><a href="#terms_of_use">Terms of Use</a>
+                    </li>
+                </ul>
+            </div> -->
+        </div>
+    </div>
+</template>
+
+<template name="about">
+	<div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading">About</h2>
+                <h3 class="section-subheading text-muted">Kairós Digital Solutions</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="timeline">
+                    <li class="timeline-inverted">
+                        <div class="timeline-image">
+                            <img class="img-circle img-responsive" src="img/about/1.jpg" alt="">
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Julio 2014</h4>
+                                <h4 class="subheading">El comienzo</h4>
+                            </div>
+                            <div class="timeline-body">
+                                <p class="text-muted">Kairós Digital Solution nace como una compañía innovadora especializada en asesoramiento y consultoría de Transformación Digital, productos digitales así como iniciativas de Big Data.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="timeline-image">
+                            <img class="img-circle img-responsive" src="img/about/2.jpg" alt="">
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Principios de 2015</h4>
+                                <h4 class="subheading">Primeros Jedis</h4>
+                            </div>
+                            <div class="timeline-body">
+                                <p class="text-muted">Comenzamos a expandirnos por clientes para ser la referencia en proyectos de gestión de cambio y construcción de productos y soluciones en el nuevo entorno competitivo digital.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="timeline-inverted">
+                        <div class="timeline-image">
+                            <img class="img-circle img-responsive" src="img/about/3.jpg" alt="">
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Mediados de 2015</h4>
+                                <h4 class="subheading">El equipo crece</h4>
+                            </div>
+                            <div class="timeline-body">
+                                <p class="text-muted">Nuestra obsesión por la excelencia, por el aprendizaje continuo y por el cliente nos permite duplicar la plantilla e incorporar grandes profesionales a proyectos innovadores.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="timeline-image">
+                            <img class="img-circle img-responsive" src="img/about/4.jpg" alt="">
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Finales de 2015</h4>
+                                <h4 class="subheading">Fase de mayor expansion</h4>
+                            </div>
+                            <div class="timeline-body">
+                                <p class="text-muted">El buen trabajo de nuestros Jedis en las distintas áreas de la compañia queda presente al incrementarse la demanda de profesionales de nuestras características, ampliando presencia en proyectos en curso, incorporandonos en proyectos nuevos y cerrando acuerdos con nuevos clientes.</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="timeline-inverted">
+                        <div class="timeline-image">
+                          <img class="img-circle img-responsive" src="img/logos/kairos-icon.svg" alt="">
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>¡Sé parte de nuestra historia!</h4>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="clients">
+	<div class="container">
+	    <div class="row">
+	        <div class="col-md-3 col-sm-6">
+	            <a href="#">
+	                <img src="img/logos/envato.jpg" class="img-responsive img-centered" alt="">
+	            </a>
+	        </div>
+	        <div class="col-md-3 col-sm-6">
+	            <a href="#">
+	                <img src="img/logos/designmodo.jpg" class="img-responsive img-centered" alt="">
+	            </a>
+	        </div>
+	        <div class="col-md-3 col-sm-6">
+	            <a href="#">
+	                <img src="img/logos/themeforest.jpg" class="img-responsive img-centered" alt="">
+	            </a>
+	        </div>
+	        <div class="col-md-3 col-sm-6">
+	            <a href="#">
+	                <img src="img/logos/creative-market.jpg" class="img-responsive img-centered" alt="">
+	            </a>
+	        </div>
+	    </div>
+	</div>
+</template>
+
+<template name="theTest">
+    {{ #if activeTest }}
+	<div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <span style="display:none">{{tot}}</span>
+                <h2 class="section-heading"> {{activeTest}} Test</h2>
+				{{ #if testNotStarted }}
+                <h3 class="section-subheading text-muted">Recuerda que cuando hagas click en el boton 'start' debes completar el test o no puntuará.</h3>
+                <h4>Que la fuerza te acompañe!</h4>
+                {{/if}}
+                <h3 id='clock'></h3>
+            </div>
+        </div>
+        {{ #if testNotStarted }}
+        <div id="start_clock" class="row text-center">
+        	<button type="button" class="btn btn-xl btn-warning start-test"><span class="glyphicon glyphicon-play"></span> Start</button>
+        </div>
+        {{/if}}
+        <div class="row text-center">
+        	<div class="col-md-12 col-sm-6 messageText">{{{messageTest}}}</div>
+            <div class="col-md-6 col-sm-6 test-question">
+				<div>{{nextQuestion}}</div>
+				{{{nextCodeExample}}}
+            </div>
+            <div class="col-md-6 col-sm-6 test-options text-left">
+                <ul class="questions-list">
+            	{{#each answers}}
+            		<li>
+                        <label><input type="radio" class="answer_test" name="answer_test" value="{{this.text}}" /> <span class="answer_text">{{this.text}}</span></label>
+                    </li>
+            	{{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-12 col-sm-6 messageText">{{{messageTest}}}</div>
+        </div>
+    </div>
+    {{/if}}
+</template>
+
+<template name="clock">
+    {{ #if activeTest }}
+    <div class="row text-center clock" id="clock">
+        <div id="digit-6" class="digit second">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div id="digit-5" class="digit second">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div id="digit-4" class="digit second">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div id="digit-3" class="digit second">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div id="digit-2" class="digit">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+    </div>
+    {{/ if}}
+</template>
