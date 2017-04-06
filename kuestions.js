@@ -326,7 +326,7 @@ if (Meteor.isClient) {
   });
   Template.main.events({
     'click .logout': function() {
-      Meteor.call('preLogout',{}, function() {
+      Meteor.call('preLogout',{kcode: Session.get('kcode')}, function() {
         Meteor.logout();
         Session.set('kcode', '');
       });
