@@ -279,9 +279,10 @@ Meteor.startup( function(){
       }
       return false;
     },
-    preLogout: function() {
+    preLogout: function(args) {
+      var args = args.kcode;
       var u = Meteor.userId;
-      Kcode.remove({user:u});
+      Kcode.remove({user:u, kcode: kcode});
       return true;
     }
   });
